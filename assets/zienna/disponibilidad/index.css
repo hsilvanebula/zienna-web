@@ -1893,3 +1893,44 @@ body.in-en { margin: 0; background: #fff; }
 .in-cel .zw-cab .in-idi { margin-left: auto; }
 @media (prefers-reduced-motion: reduce) { .in-f.on { animation: none; } .in-f { transition: none; } }
 .in-cel .zw-cel.zw-cab { gap: 8px; }
+
+/* ---------- Alojamientos: filtros + mapa (Hugo, 19-11-2026: opción B) ---------- */
+.la-sep { width: 1px; background: #e2dccf; align-self: stretch; margin: 0 4px; }
+.la-chips button[data-c].on, #la-pr.on { background: #111; color: #fff; border-color: #111; }
+#la-pr { border: 1px solid #ddd; border-radius: 999px; padding: 8px 16px; font: 500 14px Manrope, sans-serif; background: #fff; color: #111; cursor: pointer; }
+.la-pr-c { position: relative; }
+.la-pop { position: absolute; z-index: 30; top: calc(100% + 8px); left: 0; width: 300px; background: #fff; border: 1px solid #e6e0d3; border-radius: 16px; box-shadow: 0 18px 40px -16px rgba(0,0,0,.3); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.la-pop[hidden] { display: none; }
+.la-pop small { font-size: 10.5px; letter-spacing: .14em; font-weight: 700; color: #8a6d1f; }
+.la-pop-i { display: flex; gap: 10px; }
+.la-pop-i label { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: #666; }
+.la-pop-i input { border: 1px solid #ddd; border-radius: 10px; padding: 9px 10px; font: 500 15px Manrope, sans-serif; width: 100%; box-sizing: border-box; }
+.la-pop-b { display: flex; justify-content: space-between; }
+.la-pop-b button { border: 0; background: none; font: 600 14px Manrope, sans-serif; cursor: pointer; text-decoration: underline; padding: 6px 0; color: #111; }
+.la-pop-b #la-pr-ok { background: #111; color: #fff; text-decoration: none; border-radius: 10px; padding: 9px 18px; }
+.la-cnt { margin: 22px 0 0; font-size: 14.5px; color: #555; }
+.la-cnt:empty { display: none; }
+.la-split-pc { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.la-split-pc .la-g { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 16px; }
+.la-mapa { position: relative; }
+.la-split-pc .la-mapa { position: sticky; top: 16px; height: calc(100vh - 32px); max-height: 760px; margin-top: 16px; border-radius: 20px; overflow: hidden; }
+#la-m { position: absolute; inset: 0; background: #eceae4; }
+#la-m .leaflet-tile { filter: grayscale(1) contrast(.9) brightness(1.08); }
+.la-pin-c { background: none; border: 0; }
+.la-pin { display: inline-block; transform: translate(-50%, -50%); background: #fff; color: #111; border-radius: 999px; padding: 5px 10px; font: 700 13px Manrope, sans-serif; box-shadow: 0 3px 10px rgba(0,0,0,.25); white-space: nowrap; border: 1px solid #e5e5e5; cursor: pointer; transition: transform .15s; }
+.la-pin.on { background: #111; color: #fff; transform: translate(-50%, -50%) scale(1.08); position: relative; z-index: 5; }
+.la-c-on .la-f { box-shadow: 0 0 0 3px #111; }
+.la-vista { display: flex; margin-top: 16px; border: 1px solid #d9d2c3; border-radius: 999px; overflow: hidden; }
+.la-vista button { flex: 1; border: 0; background: #fff; padding: 11px; font: 600 14px Manrope, sans-serif; color: #111; cursor: pointer; }
+.la-vista button.on { background: #111; color: #fff; }
+.la-cel .la-sep { display: none; }
+.la-cel .la-mapa { height: 72vh; margin-top: 14px; border-radius: 18px; overflow: hidden; }
+.la-cel .la-pop { width: calc(100vw - 72px); max-width: 320px; }
+.la-flot { position: absolute; z-index: 1000; left: 12px; right: 12px; bottom: 12px; background: #fff; border-radius: 16px; display: grid; grid-template-columns: 96px 1fr; gap: 12px; padding: 10px; box-shadow: 0 12px 30px rgba(0,0,0,.25); color: #111 !important; text-decoration: none; }
+.la-flot[hidden] { display: none; }
+.la-flot-f { border-radius: 10px; aspect-ratio: 1; background: #eee center / cover; }
+.la-flot b { display: block; font-size: 14.5px; }
+.la-flot small { display: block; color: #666; margin-top: 2px; }
+.la-flot em { display: block; font-style: normal; font-weight: 700; margin-top: 6px; }
+@media (max-width: 1000px) { .la-split-pc { grid-template-columns: minmax(0, 1fr); } .la-split-pc .la-mapa { position: relative; top: 0; height: 420px; } }
+.la-g[hidden], .la-mapa[hidden] { display: none !important; }
