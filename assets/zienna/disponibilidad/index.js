@@ -70,7 +70,9 @@
       v = { ll: ull, sa: usa, h: uh >= 1 && uh <= 16 ? uh : (v.h || 2) };
       try { localStorage.setItem(LLAVE, JSON.stringify(v)); } catch (e) {}
     }
-    if (!v.ll || !v.sa || v.ll < hoy() || v.sa <= v.ll) { v = (MODO === "resultados" || MODO === "alojamiento" || MODO === "barrafija" || MODO === "fechas" || MODO === "tarjeta" || MODO === "detalle" || MODO === "cierre" || MODO === "ficha" || MODO === "listado" || MODO === "favoritos" || MODO === "inicio") ? { ll: "", sa: "", h: v.h || 2 } : { ll: hoy(), sa: manana(), h: v.h || 2 }; }
+    // Nunca fechas puestas solas (Hugo, 19-11-2026: «cada que le pico a reservar se colocan fechas random»): sin una
+    // búsqueda válida, todas las páginas arrancan en «Elige tu fecha».
+    if (!v.ll || !v.sa || v.ll < hoy() || v.sa <= v.ll) { v = { ll: "", sa: "", h: v.h || 2 }; }
     return v;
   }
   function guardar() { try { localStorage.setItem(LLAVE, JSON.stringify(busq)); } catch (e) {} }
