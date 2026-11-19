@@ -1915,7 +1915,7 @@ body.in-en { margin: 0; background: #fff; }
 .la-mapa { position: relative; }
 .la-split-pc .la-mapa { position: sticky; top: 16px; height: calc(100vh - 32px); max-height: 760px; margin-top: 16px; border-radius: 20px; overflow: hidden; }
 #la-m { position: absolute; inset: 0; background: #eceae4; }
-#la-m .leaflet-tile { filter: grayscale(1) contrast(.9) brightness(1.08); }
+/* mapa a colores (Hugo, 19-11-2026: «que salga un mapa colorido») */
 .la-pin-c { background: none; border: 0; }
 .la-pin { display: inline-block; transform: translate(-50%, -50%); background: #fff; color: #111; border-radius: 999px; padding: 5px 10px; font: 700 13px Manrope, sans-serif; box-shadow: 0 3px 10px rgba(0,0,0,.25); white-space: nowrap; border: 1px solid #e5e5e5; cursor: pointer; transition: transform .15s; }
 .la-pin.on { background: #111; color: #fff; transform: translate(-50%, -50%) scale(1.08); position: relative; z-index: 5; }
