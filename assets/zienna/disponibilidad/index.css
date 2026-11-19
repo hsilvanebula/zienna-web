@@ -2143,3 +2143,40 @@ body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) .bq-bar { height: 7.2vw; min-height: 
 .pt-wix.pt-cel .pt-alo .pt-c1, .pt-wix.pt-cel .pt-alo .pt-c1 b { font-size: 15px; gap: 8px; }
 .pt-wix.pt-cel .pt-alo .pt-c2 { font-size: 13.5px; margin-top: 2px; }
 .pt-wix.pt-cel .pt-alo .pt-c3 { font-size: 14px; margin-top: 4px; }
+
+/* ---------- Beneficios para tu estadía (después del registro), opción A de Hugo (19-11-2026) ---------- */
+body.bn-en { margin: 0; background: #fff !important; }
+body.bn-en .dz-page { max-width: none; padding: 0; margin: 0; }
+.bn { max-width: 1100px; margin: 0 auto; padding: 36px 20px 70px; font-family: Manrope, system-ui, sans-serif; color: #141210; }
+.bn-logo { display: block; width: 150px; margin: 0 auto; }
+.bn-logo img { width: 100%; display: block; }
+.bn-cab { text-align: center; margin: 26px 0 40px; }
+.bn-ok { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #1f7a5c; background: #e8f4ee; border-radius: 999px; padding: 7px 13px; }
+.bn-cab h1 { font: 500 44px/1.1 'Bodoni Moda', Georgia, serif; margin: 16px 0 10px; }
+.bn-cab p { font-size: 17px; color: #6b665e; margin: 0; }
+.bn-g { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.bn-c { border: 1px solid #ebe6db; border-radius: 22px; overflow: hidden; background: #fff; display: flex; flex-direction: column; }
+.bn-f { display: block; aspect-ratio: 16 / 10; background: #ddd center / cover no-repeat; }
+.bn-cu { padding: 24px; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.bn-e { font-size: 11px; font-weight: 700; letter-spacing: .2em; color: #a5843a; }
+.bn-c h2 { margin: 0; font: 500 28px/1.15 'Bodoni Moda', Georgia, serif; }
+.bn-c p { margin: 0; color: #6b665e; font-size: 15px; line-height: 1.5; }
+.bn-pr { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.bn-pr span { border: 1px solid #e3ddd0; border-radius: 12px; padding: 10px 6px; text-align: center; font-size: 13px; color: #6b665e; }
+.bn-pr b { display: block; color: #141210; font-size: 18px; margin-top: 2px; }
+.bn-cod { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1.5px dashed #b08d3c; background: #fbf6ea; border-radius: 10px; padding: 9px 12px; font-size: 15px; font-weight: 700; letter-spacing: .08em; }
+.bn-cod small { font-size: 12px; font-weight: 600; letter-spacing: 0; color: #8a6d1f; }
+.bn-cod button { border: 0; background: #141210; color: #fff; border-radius: 7px; padding: 6px 10px; font: 600 12px Manrope, sans-serif; cursor: pointer; }
+.bn-btn { margin-top: auto; display: flex; align-items: center; justify-content: center; border-radius: 999px; padding: 14px 22px; font-size: 15px; font-weight: 600; text-decoration: none !important; text-align: center; }
+.bn-neg { background: #141210; color: #fff !important; }
+.bn-bor { border: 1px solid #141210; color: #141210 !important; }
+.bn-ir { display: block; text-align: center; margin-top: 34px; color: #6b665e !important; font-size: 14px; }
+@media (max-width: 760px) {
+  .bn { padding: 26px 16px 56px; }
+  .bn-cab { margin: 20px 0 28px; }
+  .bn-cab h1 { font-size: 32px; }
+  .bn-cab p { font-size: 15px; }
+  .bn-g { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .bn-cu { padding: 18px; }
+  .bn-c h2 { font-size: 24px; }
+}
