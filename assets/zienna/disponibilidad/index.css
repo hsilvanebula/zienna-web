@@ -1934,3 +1934,31 @@ body.in-en { margin: 0; background: #fff; }
 .la-flot em { display: block; font-style: normal; font-weight: 700; margin-top: 6px; }
 @media (max-width: 1000px) { .la-split-pc { grid-template-columns: minmax(0, 1fr); } .la-split-pc .la-mapa { position: relative; top: 0; height: 420px; } }
 .la-g[hidden], .la-mapa[hidden] { display: none !important; }
+
+/* ---------- «Por qué elegir Zienna» (Hugo, 19-11-2026): tarjetas con ícono, sin fotos, fondo de siempre ---------- */
+.pt-metricas.pt-mb { border: 0; border-radius: 0; overflow: visible; gap: 16px; }
+.pt-mb .pt-m { align-items: flex-start; text-align: left; gap: 0; padding: 30px 26px 28px; border: 1px solid #e7e2d8; border-radius: 20px; justify-content: flex-start; background: #fff; }
+.pt-mb .pt-m:last-child { border-right: 1px solid #e7e2d8; }
+.pt-mb .pt-m-n { background: #111; border-color: #111; }
+.pt-mb .pt-m-n:last-child { border-right-color: #111; }
+.pt-mb .pt-m-ico { color: #B8893A; margin-bottom: 14px; flex: none; }
+.pt-mb .pt-m-n .pt-m-ico { color: #D4A537; }
+.pt-mb .pt-m small { letter-spacing: .18em; }
+.pt-mb .pt-m b { font-size: 56px; line-height: 1; margin: 12px 0 14px; }
+.pt-mb .pt-m span { font-size: 15.5px; }
+.pt-mb .pt-m i { margin-top: 3px; white-space: normal; font-size: 13.5px; }
+.pt-cel .pt-metricas.pt-mb { gap: 12px; padding: 0; }
+.pt-cel .pt-mb .pt-m { min-height: 0; padding: 18px 16px 18px; border-radius: 16px; border-bottom: 1px solid #e7e2d8; }
+.pt-cel .pt-mb .pt-m:nth-child(2n) { border-right: 1px solid #e7e2d8; }
+.pt-cel .pt-mb .pt-m-n:nth-child(2n) { border-right-color: #111; }
+.pt-cel .pt-mb .pt-m:nth-child(n+3) { border-bottom: 1px solid #e7e2d8; }
+.pt-cel .pt-mb .pt-m-ico { width: 24px; height: 24px; margin-bottom: 10px; }
+.pt-cel .pt-mb .pt-m b { font-size: 32px; margin: 8px 0 8px; white-space: normal; }
+.pt-cel .pt-mb .pt-m span { font-size: 13.5px; }
+.pt-cel .pt-mb .pt-m i { font-size: 12px; }
+/* Aviso oficial de Indecopi (Libro de Reclamaciones) en el pie y en la página del libro */
+.zw-lr { background: #fff; color: #111 !important; border: 0; border-radius: 12px; padding: 8px 14px 8px 8px; gap: 12px; }
+.zw-lr img { width: 96px; height: auto; display: block; flex: none; }
+.zw-lr span { font-size: 12.5px; line-height: 1.35; max-width: 170px; color: #111; }
+.lr-tit .lr-ind { width: 120px; height: auto; flex: none; }
+.lr-cel .lr-tit .lr-ind { width: 84px; }
