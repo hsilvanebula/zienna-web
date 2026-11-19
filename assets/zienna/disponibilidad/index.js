@@ -1726,13 +1726,14 @@
   }
   function anchoPC(sel) { ANCHO_SEL = sel; aplicarAncho(); }
   window.addEventListener("resize", function () { aplicarAncho(); });
-  function marcoWeb(CEL, actual) {
+  function marcoWeb(CEL, actual, extra) {
+    extra = extra || "";
     var M = [["Home", WEB + "/"], ["Alojamientos", LISTADO], ["Para Propietarios", RAPIDA + "/propietarios"], ["Limpieza", RAPIDA + "/limpieza"]];
     var links = M.map(function (x) { return '<a href="' + x[1] + '"' + (x[0] === actual ? ' class="on"' : '') + '>' + x[0] + '</a>'; }).join("");
     var cab = '<header class="zw-cab' + (CEL ? " zw-cel" : "") + '"><a class="zw-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_h.png" alt="Zienna Living & Aparts"></a>' +
-      (CEL ? favLink(true) + '<button type="button" class="zw-menu" id="zw-menu" aria-label="Abrir menú" aria-expanded="false"><i></i><i></i><i></i></button>' +
+      (CEL ? extra + favLink(true) + '<button type="button" class="zw-menu" id="zw-menu" aria-label="Abrir menú" aria-expanded="false"><i></i><i></i><i></i></button>' +
         '<nav class="zw-nav-cel" id="zw-nav">' + links + '<a class="zw-res" href="' + LISTADO + '">Reservar</a></nav>' :
-        '<nav class="zw-nav">' + links + '</nav>' + favLink(false) + '<a class="zw-res" href="' + LISTADO + '">Reservar</a>') + '</header>';
+        '<nav class="zw-nav">' + links + '</nav>' + extra + favLink(false) + '<a class="zw-res" href="' + LISTADO + '">Reservar</a>') + '</header>';
     var pie = '<footer class="zw-pie' + (CEL ? " zw-cel" : "") + '"><div class="zw-pie-g">' +
       '<a class="zw-pie-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_blanco.png" alt="Zienna"></a>' +
       '<div><b>CONTACTO</b><a href="' + WEB + '/contacto">info@bookzienna.com</a><a href="' + WEB + '/contacto">Formulario de contacto</a><span>Lima, Perú</span></div>' +
@@ -2073,99 +2074,76 @@
     pintar();
   }
 
-  // ───────── Portada propia (Hugo, 19-11-2026: opción A «Cine»; mientras no haya video, fotos con transiciones) ─────────
-  // Fotos a pantalla completa que se funden una en otra con un acercamiento lento; encima, el buscador. ES · EN · PT
-  // (por ahora solo esta página; las fichas siguen en español). Idioma: ?lang=, lo último elegido, o el del navegador.
+  // ───────── Portada propia: fotos de la parte de arriba (donde irá el video), en este orden ─────────
   var PORTADA_FOTOS = [
     ["b4147d_6cadcd4b83ef46659e5318c6e31b3c72~mv2.jpeg", "SM1006"], ["d58443_c497c759fbc54183b6f4c4445e5d263e~mv2.jpg", "SI2105"],
     ["b4147d_d18a8a9007524776a9cc422714918d40~mv2.jpeg", "SM1006"], ["b4147d_d4f19b6c10fa4b8e9195e3bad5d26041~mv2.png", "SM310"],
     ["b4147d_7617ffe95430420e97fb4bbaac7a1ac0~mv2.jpeg", "SM1006"], ["b4147d_c2df8fcba89f4feca5d07781c423e4a1~mv2.png", "LINCE1504"],
     ["b4147d_9b8f57dd925f4913a442f0b5b72829f9~mv2.jpeg", "SI502"]];
+  // Idiomas de la pastilla (Hugo, 19-11-2026: «10 idiomas principales, como una pastilla para cambiar»). Por ahora
+  // cambian la parte de arriba de la portada y el menú; el resto de la página sigue en español.
+  var IDIOMAS = [["es", "Español"], ["en", "English"], ["pt", "Português"], ["fr", "Français"], ["de", "Deutsch"], ["it", "Italiano"],
+    ["zh", "中文"], ["ja", "日本語"], ["ko", "한국어"], ["ru", "Русский"]];
+  // t1/t2 título y bajada · ll/sa/hu/elige/buscar caja de fechas · hs huésped(es) · nav menú · con Contacto · res Reservar
   var PORTADA_T = {
-    es: { promo: "Reserva directo y paga <b>20 % menos</b> · desde 2 noches", nav: ["Alojamientos", "Para Propietarios", "Limpieza"], reservar: "Reservar",
-      ceja: "Zienna Living & Aparts · Lima", t1: "Vive Lima frente al mar",
-      t2: "Departamentos de diseño en San Isidro, San Miguel y Lince. Llegada autónoma, limpieza incluida y precio final sin sorpresas.",
-      zona: "Zona", todas: "Todas las zonas", ll: "Llegada", sa: "Salida", hu: "Huéspedes", agregar: "Agregar fecha", huesped: ["huésped", "huéspedes"], buscar: "Buscar",
-      fotos: ["Piscina frente al mar · San Miguel", "Piscina con vista · San Isidro", "Atardecer en tu terraza · San Miguel", "Piscina frente al mar · San Miguel", "Sala con vista al Pacífico · San Miguel", "Piscina con vista a la ciudad · Lince", "Piscina al atardecer · San Isidro"],
-      puntos: [["Frente al mar", "Vistas al Pacífico y a la ciudad desde pisos altos."], ["Llegada autónoma", "Tu propia clave: entras desde las 3:00 pm, sin esperar a nadie."], ["Limpieza incluida", "El precio que ves es el final. No pagas nada más."], ["Atención directa", "Te respondemos por WhatsApp, sin intermediarios."]],
-      elige: "Elige tu zona", verTodos: "Ver todos los alojamientos",
-      zonas: [["San Miguel", "Frente al mar, con vista al Pacífico"], ["San Isidro", "Vista al mar y calles arboladas"], ["Lince", "Céntrico, con piscina y vista a la ciudad"]],
-      menu: "Abrir menú", nota: "Elige tus fechas en el siguiente paso." },
-    en: { promo: "Book direct and save <b>20 %</b> · from 2 nights", nav: ["Stays", "Property owners", "Cleaning"], reservar: "Book now",
-      ceja: "Zienna Living & Aparts · Lima", t1: "Live Lima by the sea",
-      t2: "Design apartments in San Isidro, San Miguel and Lince. Self check-in, cleaning included and a final price with no surprises.",
-      zona: "Area", todas: "All areas", ll: "Check-in", sa: "Check-out", hu: "Guests", agregar: "Add date", huesped: ["guest", "guests"], buscar: "Search",
-      fotos: ["Oceanfront pool · San Miguel", "Pool with a view · San Isidro", "Sunset on your terrace · San Miguel", "Oceanfront pool · San Miguel", "Living room facing the Pacific · San Miguel", "Pool with city views · Lince", "Pool at sunset · San Isidro"],
-      puntos: [["By the sea", "Pacific and city views from high floors."], ["Self check-in", "Your own door code: arrive from 3:00 pm, no waiting."], ["Cleaning included", "The price you see is the final price. Nothing else to pay."], ["Direct support", "We reply on WhatsApp, no middlemen."]],
-      elige: "Choose your area", verTodos: "See all stays",
-      zonas: [["San Miguel", "Oceanfront, facing the Pacific"], ["San Isidro", "Sea views and tree-lined streets"], ["Lince", "Central, with a pool and city views"]],
-      menu: "Open menu", nota: "Pick your dates in the next step." },
-    pt: { promo: "Reserve direto e pague <b>20 % menos</b> · a partir de 2 noites", nav: ["Hospedagens", "Proprietários", "Limpeza"], reservar: "Reservar",
-      ceja: "Zienna Living & Aparts · Lima", t1: "Viva Lima de frente para o mar",
-      t2: "Apartamentos de design em San Isidro, San Miguel e Lince. Check-in autônomo, limpeza incluída e preço final sem surpresas.",
-      zona: "Região", todas: "Todas as regiões", ll: "Chegada", sa: "Saída", hu: "Hóspedes", agregar: "Adicionar data", huesped: ["hóspede", "hóspedes"], buscar: "Buscar",
-      fotos: ["Piscina de frente para o mar · San Miguel", "Piscina com vista · San Isidro", "Pôr do sol no seu terraço · San Miguel", "Piscina de frente para o mar · San Miguel", "Sala com vista para o Pacífico · San Miguel", "Piscina com vista para a cidade · Lince", "Piscina ao pôr do sol · San Isidro"],
-      puntos: [["De frente para o mar", "Vista para o Pacífico e para a cidade, em andares altos."], ["Check-in autônomo", "Sua própria senha: entre a partir das 15h, sem esperar ninguém."], ["Limpeza incluída", "O preço que você vê é o final. Nada mais a pagar."], ["Atendimento direto", "Respondemos pelo WhatsApp, sem intermediários."]],
-      elige: "Escolha a região", verTodos: "Ver todas as hospedagens",
-      zonas: [["San Miguel", "De frente para o mar, com vista para o Pacífico"], ["San Isidro", "Vista para o mar e ruas arborizadas"], ["Lince", "Central, com piscina e vista para a cidade"]],
-      menu: "Abrir menu", nota: "Escolha as datas no próximo passo." }
+    es: { t1: "Comodidad y sofisticación", t2: "Tu estancia, pensada para disfrutar.", ll: "Llegada", sa: "Salida", hu: "Huéspedes", elige: "Elige tu fecha", buscar: "Buscar", hs: ["huésped", "huéspedes"], nav: ["Home", "Alojamientos", "Para Propietarios", "Limpieza"], con: "Contacto", res: "Reservar" },
+    en: { t1: "Comfort and sophistication", t2: "Your stay, designed to be enjoyed.", ll: "Check-in", sa: "Check-out", hu: "Guests", elige: "Choose a date", buscar: "Search", hs: ["guest", "guests"], nav: ["Home", "Stays", "Property owners", "Cleaning"], con: "Contact", res: "Book now" },
+    pt: { t1: "Conforto e sofisticação", t2: "Sua estadia, pensada para aproveitar.", ll: "Chegada", sa: "Saída", hu: "Hóspedes", elige: "Escolha a data", buscar: "Buscar", hs: ["hóspede", "hóspedes"], nav: ["Início", "Hospedagens", "Proprietários", "Limpeza"], con: "Contato", res: "Reservar" },
+    fr: { t1: "Confort et raffinement", t2: "Votre séjour, pensé pour en profiter.", ll: "Arrivée", sa: "Départ", hu: "Voyageurs", elige: "Choisir une date", buscar: "Rechercher", hs: ["voyageur", "voyageurs"], nav: ["Accueil", "Logements", "Propriétaires", "Ménage"], con: "Contact", res: "Réserver" },
+    de: { t1: "Komfort und Eleganz", t2: "Ihr Aufenthalt, gemacht zum Genießen.", ll: "Anreise", sa: "Abreise", hu: "Gäste", elige: "Datum wählen", buscar: "Suchen", hs: ["Gast", "Gäste"], nav: ["Start", "Unterkünfte", "Eigentümer", "Reinigung"], con: "Kontakt", res: "Buchen" },
+    it: { t1: "Comfort e raffinatezza", t2: "Il tuo soggiorno, pensato per goderselo.", ll: "Arrivo", sa: "Partenza", hu: "Ospiti", elige: "Scegli la data", buscar: "Cerca", hs: ["ospite", "ospiti"], nav: ["Home", "Alloggi", "Proprietari", "Pulizie"], con: "Contatti", res: "Prenota" },
+    zh: { t1: "舒适与精致", t2: "为享受而设计的住宿。", ll: "入住", sa: "退房", hu: "住客", elige: "选择日期", buscar: "搜索", hs: ["位住客", "位住客"], nav: ["首页", "房源", "业主服务", "清洁服务"], con: "联系我们", res: "预订" },
+    ja: { t1: "快適さと洗練", t2: "心から楽しめる滞在を。", ll: "チェックイン", sa: "チェックアウト", hu: "ゲスト", elige: "日付を選択", buscar: "検索", hs: ["名", "名"], nav: ["ホーム", "宿泊施設", "オーナーの方へ", "清掃サービス"], con: "お問い合わせ", res: "予約する" },
+    ko: { t1: "편안함과 세련미", t2: "온전히 즐기도록 준비한 숙소.", ll: "체크인", sa: "체크아웃", hu: "게스트", elige: "날짜 선택", buscar: "검색", hs: ["명", "명"], nav: ["홈", "숙소", "집주인 안내", "청소 서비스"], con: "문의하기", res: "예약하기" },
+    ru: { t1: "Комфорт и изысканность", t2: "Ваш отдых — чтобы наслаждаться.", ll: "Заезд", sa: "Выезд", hu: "Гости", elige: "Выберите дату", buscar: "Найти", hs: ["гость", "гостя"], nav: ["Главная", "Жильё", "Владельцам", "Уборка"], con: "Контакты", res: "Забронировать" }
   };
+  var GLOBO = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3z"/></svg>';
+  // Portada propia (Hugo, 19-11-2026): igual que la de Wix; solo cambia la parte de arriba, donde irá el video. Mientras
+  // no haya video, fotos que se funden una en otra con un acercamiento lento. Debajo, lo mismo de siempre (portadaHTML).
   function modoInicio() {
     var CEL = window.innerWidth < 760, $ = function (id) { return document.getElementById(id); };
     var lang = (Q.get("lang") || "").toLowerCase();
     if (!PORTADA_T[lang]) { try { lang = localStorage.getItem("zlang") || ""; } catch (e) { lang = ""; } }
-    if (!PORTADA_T[lang]) { lang = /^pt/i.test(navigator.language || "") ? "pt" : /^en/i.test(navigator.language || "") ? "en" : "es"; }
-    document.body.className += " in-en" + (CEL ? " in-cel" : "");
+    if (!PORTADA_T[lang]) { lang = "es"; }
+    document.body.className += " in-en pt-en " + (CEL ? "in-cel pt-cel" : "pt-pc");
     letraZienna();
-    var mw = marcoWeb(CEL, "");
-    var actual = 0, timer = null, zonaSel = "";
-    var ZFOTO = { "San Miguel": "b4147d_7617ffe95430420e97fb4bbaac7a1ac0~mv2.jpeg", "San Isidro": "d58443_c497c759fbc54183b6f4c4445e5d263e~mv2.jpg", "Lince": "b4147d_d05b7a52aca34774b80ddf1f81ff7f5e~mv2.png" };
-    function foto(id) { return CEL ? wixFoto(id, 900, 1500) : wixFoto(id, 1920, 1080); }
-    function urlListado(z) { var u = LISTADO, q = []; if (z) { q.push("zona=" + encodeURIComponent(z)); } if (busq.ll && busq.sa) { q.push("ll=" + busq.ll, "sa=" + busq.sa, "h=" + (busq.h || 2)); } return u + (q.length ? "?" + q.join("&") : ""); }
+    var actual = 0, timer = null, debajo = '<p class="dz-nota" style="padding:40px 16px">Cargando…</p>';
+    function foto(id) { return CEL ? wixFoto(id, 900, 1400) : wixFoto(id, 1920, 1080); }
+    function pastilla() {
+      var L = IDIOMAS.filter(function (x) { return x[0] === lang; })[0];
+      return '<div class="in-idi"><button type="button" class="in-pas" id="in-pas" aria-haspopup="listbox" aria-expanded="false">' + GLOBO + '<span>' + (CEL ? lang.toUpperCase() : L[1]) + '</span><i>▾</i></button>' +
+        '<ul class="in-lista" id="in-lista" role="listbox" hidden>' + IDIOMAS.map(function (x) { return '<li role="option" data-l="' + x[0] + '"' + (x[0] === lang ? ' class="on" aria-selected="true"' : '') + '>' + x[1] + '</li>'; }).join("") + '</ul></div>';
+    }
     function pintar() {
-      var T = PORTADA_T[lang], h = +busq.h || 2;
+      var T = PORTADA_T[lang], h = +busq.h || 2, opH = "";
       document.documentElement.lang = lang;
-      var navs = [LISTADO, RAPIDA + "/propietarios", RAPIDA + "/limpieza"];
-      var idi = '<div class="in-idi" id="in-idi">' + ["es", "en", "pt"].map(function (l) { return '<button type="button" data-l="' + l + '"' + (l === lang ? ' class="on"' : '') + '>' + l.toUpperCase() + '</button>'; }).join("") + '</div>';
-      var opH = ""; for (var i = 1; i <= 6; i++) { opH += '<option value="' + i + '"' + (i === h ? " selected" : "") + '>' + i + " " + T.huesped[i === 1 ? 0 : 1] + '</option>'; }
-      APP.innerHTML = '<div class="in-promo">' + T.promo + '</div>' +
-        '<section class="in-hero"><div class="in-fotos" id="in-fotos">' + PORTADA_FOTOS.map(function (f, k) { return '<div class="in-f' + (k === actual ? ' on' : '') + '" data-k="' + k + '"' + (k < 2 ? ' style="background-image:url(\'' + foto(f[0]) + '\')"' : '') + '></div>'; }).join("") + '</div>' +
-        '<div class="in-velo"></div>' +
-        '<header class="in-cab"><a class="in-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_blanco.png" alt="Zienna Living & Aparts"></a>' +
-        (CEL ? idi + '<button type="button" class="in-menu" id="in-menu" aria-label="' + T.menu + '" aria-expanded="false"><i></i><i></i><i></i></button>' +
-          '<nav class="in-nav-cel" id="in-nav">' + T.nav.map(function (t, k) { return '<a href="' + navs[k] + '">' + t + '</a>'; }).join("") + '<a class="in-res" href="' + LISTADO + '">' + T.reservar + '</a></nav>' :
-          '<nav class="in-nav">' + T.nav.map(function (t, k) { return '<a href="' + navs[k] + '">' + t + '</a>'; }).join("") + '</nav>' + idi + '<a class="in-res" href="' + LISTADO + '">' + T.reservar + '</a>') + '</header>' +
-        '<div class="in-centro"><p class="in-ceja">' + esc(T.ceja) + '</p><h1>' + esc(T.t1) + '</h1><p class="in-sub">' + esc(T.t2) + '</p>' +
-        '<form class="in-barra" id="in-barra"><label class="in-c in-zona"><small>' + T.zona + '</small><select id="in-z"><option value="">' + T.todas + '</option><option>San Miguel</option><option>San Isidro</option><option>Lince</option></select></label>' +
-        '<a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : T.agregar) + '</b></a>' +
-        '<a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : T.agregar) + '</b></a>' +
-        '<label class="in-c in-hu"><small>' + T.hu + '</small><select id="in-h">' + opH + '</select></label>' +
-        '<button type="submit" class="in-buscar">' + T.buscar + '</button></form></div>' +
-        '<div class="in-pie-hero"><span class="in-cap" id="in-cap">' + esc(T.fotos[actual]) + '</span><span class="in-puntos" id="in-puntos">' +
-        PORTADA_FOTOS.map(function (f, k) { return '<button type="button" data-k="' + k + '"' + (k === actual ? ' class="on"' : '') + ' aria-label="' + (k + 1) + '"><i></i></button>'; }).join("") + '</span></div></section>' +
-        '<section class="in-sec in-ptos">' + T.puntos.map(function (x) { return '<div><small>' + esc(x[0]) + '</small><p>' + esc(x[1]) + '</p></div>'; }).join("") + '</section>' +
-        '<section class="in-sec"><div class="in-sec-cab"><h2>' + esc(T.elige) + '</h2><a href="' + LISTADO + '">' + esc(T.verTodos) + ' →</a></div><div class="in-zonas">' +
-        T.zonas.map(function (z) { return '<a class="in-zn" href="' + esc(urlListado(z[0])) + '"><span class="in-zn-img" style="background-image:url(\'' + wixFoto(ZFOTO[z[0]], 900, 1100) + '\')"></span><span class="in-zn-t"><b>' + esc(z[0]) + '</b><em>' + esc(z[1]) + '</em></span></a>'; }).join("") +
-        '</div></section>' + mw.pie;
-      $("in-z").value = zonaSel;
-      $("in-z").addEventListener("change", function () { zonaSel = this.value; });
+      for (var i = 1; i <= 6; i++) { opH += '<option value="' + i + '"' + (i === h ? " selected" : "") + '>' + i + " " + T.hs[i === 1 ? 0 : 1] + '</option>'; }
+      var extra = pastilla() + '<a class="in-con" href="' + RAPIDA + '/disponibilidad?modo=contacto">' + T.con + '</a>';
+      var mw = marcoWeb(CEL, "Home", extra);
+      APP.innerHTML = mw.cab +
+        '<section class="in-hero"><div class="in-fotos">' + PORTADA_FOTOS.map(function (f, k) { return '<div class="in-f' + (k === actual ? ' on' : '') + '" data-k="' + k + '"' + (k < 2 ? ' style="background-image:url(\'' + foto(f[0]) + '\')"' : '') + '></div>'; }).join("") + '</div>' +
+        '<div class="in-velo"></div><div class="in-txt"><h1>' + esc(T.t1) + '</h1><p>' + esc(T.t2) + '</p></div>' +
+        '<form class="in-barra" id="in-barra"><a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : T.elige) + '</b></a>' +
+        '<a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : T.elige) + '</b></a>' +
+        '<label class="in-c in-hu"><small>' + T.hu + '</small><select id="in-h">' + opH + '</select></label><button type="submit" class="in-buscar">' + T.buscar + '</button></form>' +
+        '<span class="in-puntos" id="in-puntos">' + PORTADA_FOTOS.map(function (f, k) { return '<button type="button" data-k="' + k + '"' + (k === actual ? ' class="on"' : '') + ' aria-label="' + (k + 1) + '"><i></i></button>'; }).join("") + '</span></section>' +
+        '<div class="in-debajo" id="in-debajo"><div class="pt">' + debajo + '</div></div>' + mw.pie;
+      // menú traducido (marcoWeb lo arma en español)
+      [].forEach.call(document.querySelectorAll(".zw-nav a, .zw-nav-cel a:not(.zw-res)"), function (a, k) { if (T.nav[k % 4]) { a.textContent = T.nav[k % 4]; } });
+      [].forEach.call(document.querySelectorAll(".zw-res"), function (a) { a.textContent = T.res; });
       $("in-h").addEventListener("change", function () { busq.h = +this.value; guardar(); });
-      $("in-barra").addEventListener("submit", function (ev) {
-        ev.preventDefault();
-        irA(busq.ll && busq.sa && !zonaSel ? urlBuscar() : urlListado(zonaSel));
-      });
-      $("in-idi").addEventListener("click", function (ev) {
-        var b = ev.target.closest("button[data-l]"); if (!b) { return; }
-        lang = b.getAttribute("data-l"); try { localStorage.setItem("zlang", lang); } catch (e) {}
+      $("in-barra").addEventListener("submit", function (ev) { ev.preventDefault(); irA(busq.ll && busq.sa ? urlBuscar() : urlBuscar("fechas")); });
+      $("in-pas").addEventListener("click", function (ev) { ev.stopPropagation(); var l = $("in-lista"); l.hidden = !l.hidden; this.setAttribute("aria-expanded", l.hidden ? "false" : "true"); });
+      $("in-lista").addEventListener("click", function (ev) {
+        var li = ev.target.closest("li[data-l]"); if (!li) { return; }
+        lang = li.getAttribute("data-l"); try { localStorage.setItem("zlang", lang); } catch (e) {}
         pintar();
       });
       $("in-puntos").addEventListener("click", function (ev) { var b = ev.target.closest("button[data-k]"); if (b) { ir(+b.getAttribute("data-k")); } });
-      var m = $("in-menu");
-      if (m) { m.addEventListener("click", function () { var n = $("in-nav"), ab = n.classList.toggle("abierto"); m.classList.toggle("abierto", ab); m.setAttribute("aria-expanded", ab ? "true" : "false"); }); }
       ligarMarco();
       arrancar();
     }
-    // Precarga la foto siguiente antes de mostrarla, para que la transición nunca enseñe un fondo vacío.
+    document.addEventListener("click", function () { var l = $("in-lista"); if (l && !l.hidden) { l.hidden = true; $("in-pas").setAttribute("aria-expanded", "false"); } });
     function cargar(k, listo) {
       var el = document.querySelector('.in-f[data-k="' + k + '"]'); if (!el) { return; }
       if (el.style.backgroundImage) { if (listo) { listo(); } return; }
@@ -2177,11 +2155,10 @@
       cargar(k, function () {
         var fs = document.querySelectorAll(".in-f"), ps = document.querySelectorAll("#in-puntos button");
         if (!fs.length) { return; }
-        fs[actual].classList.remove("on"); fs[actual].classList.add("sale"); var viejo = fs[actual];
+        var viejo = fs[actual]; viejo.classList.remove("on"); viejo.classList.add("sale");
         setTimeout(function () { viejo.classList.remove("sale"); }, 1800);
         actual = k; fs[actual].classList.add("on");
         [].forEach.call(ps, function (b, j) { b.classList.toggle("on", j === actual); });
-        $("in-cap").textContent = PORTADA_T[lang].fotos[actual];
         cargar((actual + 1) % PORTADA_FOTOS.length);
         arrancar();
       });
@@ -2193,6 +2170,7 @@
     }
     pintar();
     cargar(1);
+    llamarSWR("alojamientos", {}, function (d) { debajo = portadaHTML(d.alojamientos, d.descuento, CEL); var c = $("in-debajo"); if (c) { c.innerHTML = '<div class="pt">' + debajo + '</div>'; } });
   }
 
   function modoLimpieza() {
