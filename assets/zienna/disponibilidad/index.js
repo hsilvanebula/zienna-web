@@ -204,21 +204,21 @@
     function hTxt() { var h = +busq.h || 2; return h + " " + L.hs[h === 1 ? 0 : 1]; }
     function fechasTxt() { return busq.ll && busq.sa ? corto(busq.ll) + " → " + corto(busq.sa) : busq.ll ? corto(busq.ll) + " → …" : L.eliges; }
     function barra() {
-      var flecha = '<i class="cb-fl"></i>';
-      return '<div class="cb-bar' + (CEL ? ' cb-cel' : '') + '">' +
-        '<button type="button" class="cb-c' + (abierto === "dis" ? ' on' : '') + '" data-p="dis"><small>' + L.dis + '</small><b>' + esc(z || (CEL ? "Todos" : L.todos)) + '</b>' + flecha + '</button>' +
-        (CEL ? '<button type="button" class="cb-c' + (abierto === "fe" ? ' on' : '') + '" data-p="fe"><small>' + L.fe + '</small><b>' + fechasTxt() + '</b></button>' :
-          '<button type="button" class="cb-c' + (abierto === "fe" && !(busq.ll && !busq.sa) ? ' on' : '') + '" data-p="fe"><small>' + L.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : L.elige) + '</b></button>' +
-          '<button type="button" class="cb-c' + (abierto === "fe" && busq.ll && !busq.sa ? ' on' : '') + '" data-p="fe"><small>' + L.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : L.elige) + '</b></button>') +
-        '<button type="button" class="cb-c' + (abierto === "hu" ? ' on' : '') + '" data-p="hu"><small>' + L.hu + '</small><b>' + hTxt() + '</b>' + flecha + '</button>' +
-        '<button type="button" class="cb-go" data-p="go">' + L.buscar + '</button></div>';
+      var flecha = '<i class="bq-fl"></i>';
+      return '<div class="bq-bar' + (CEL ? ' bq-cel' : '') + '">' +
+        '<button type="button" class="bq-c' + (abierto === "dis" ? ' on' : '') + '" data-p="dis"><small>' + L.dis + '</small><b>' + esc(z || (CEL ? "Todos" : L.todos)) + '</b>' + flecha + '</button>' +
+        (CEL ? '<button type="button" class="bq-c' + (abierto === "fe" ? ' on' : '') + '" data-p="fe"><small>' + L.fe + '</small><b>' + fechasTxt() + '</b></button>' :
+          '<button type="button" class="bq-c' + (abierto === "fe" && !(busq.ll && !busq.sa) ? ' on' : '') + '" data-p="fe"><small>' + L.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : L.elige) + '</b></button>' +
+          '<button type="button" class="bq-c' + (abierto === "fe" && busq.ll && !busq.sa ? ' on' : '') + '" data-p="fe"><small>' + L.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : L.elige) + '</b></button>') +
+        '<button type="button" class="bq-c' + (abierto === "hu" ? ' on' : '') + '" data-p="hu"><small>' + L.hu + '</small><b>' + hTxt() + '</b>' + flecha + '</button>' +
+        '<button type="button" class="bq-go" data-p="go">' + L.buscar + '</button></div>';
     }
     function mes(ym) {
       var p = ym.split("-"), d1 = new Date(+p[0], +p[1] - 1, 1), dias = new Date(+p[0], +p[1], 0).getDate(), vac = (d1.getDay() + 6) % 7, hoyF = hoy(), h = '';
-      h += '<div class="cb-mes"><b>' + mesTxt(ym) + '</b><div class="cb-dow">' + DOW_C.map(function (d) { return '<span>' + d + '</span>'; }).join("") + '</div><div class="cb-g">';
+      h += '<div class="bq-mes"><b>' + mesTxt(ym) + '</b><div class="bq-dow">' + DOW_C.map(function (d) { return '<span>' + d + '</span>'; }).join("") + '</div><div class="bq-g">';
       for (var i = 0; i < vac; i++) { h += '<span></span>'; }
       for (var d = 1; d <= dias; d++) {
-        var f = ym + "-" + pad(d), c = "cb-d";
+        var f = ym + "-" + pad(d), c = "bq-d";
         if (f < hoyF) { c += " pas"; }
         if (f === busq.ll || f === busq.sa) { c += " sel"; }
         if (busq.ll && busq.sa && f > busq.ll && f < busq.sa) { c += " rango"; }
@@ -229,24 +229,24 @@
     }
     function panel() {
       if (!abierto) { return ""; }
-      var h = '<div class="cb-pop cb-pop-' + abierto + (op.arriba ? ' cb-arriba' : '') + '">';
+      var h = '<div class="bq-pop bq-pop-' + abierto + (op.arriba ? ' bq-arriba' : '') + '">';
       if (abierto === "dis") {
-        h += [""].concat(DISTRITOS).map(function (d) { return '<button type="button" class="cb-op' + (d === z ? ' on' : '') + '" data-z="' + d + '">' + esc(d || L.todos) + '</button>'; }).join("");
+        h += [""].concat(DISTRITOS).map(function (d) { return '<button type="button" class="bq-op' + (d === z ? ' on' : '') + '" data-z="' + d + '">' + esc(d || L.todos) + '</button>'; }).join("");
       } else if (abierto === "fe") {
         var ym = sumaMes(hoy().slice(0, 7), off), n = busq.ll && busq.sa ? Math.round((new Date(busq.sa + "T12:00:00") - new Date(busq.ll + "T12:00:00")) / 864e5) : 0;
-        h += '<div class="cb-cab"><button type="button" class="cb-nav" data-n="-1"' + (off <= 0 ? ' disabled' : '') + ' aria-label="Mes anterior">‹</button><span>' +
+        h += '<div class="bq-cab"><button type="button" class="bq-nav" data-n="-1"' + (off <= 0 ? ' disabled' : '') + ' aria-label="Mes anterior">‹</button><span>' +
           (n ? n + (n === 1 ? " noche" : " noches") + " · " + corto(busq.ll) + " → " + corto(busq.sa) : busq.ll ? "Ahora elige tu salida" : "Elige tu llegada") +
-          '</span><button type="button" class="cb-nav" data-n="1"' + (off >= 10 ? ' disabled' : '') + ' aria-label="Mes siguiente">›</button></div>';
-        h += '<div class="cb-meses">' + mes(ym) + (CEL ? '' : mes(sumaMes(ym, 1))) + '</div>';
-        h += '<div class="cb-pie"><button type="button" class="cb-borrar" data-x="1">Borrar</button><button type="button" class="cb-listo" data-p="">' + (n ? "Listo" : "Cerrar") + '</button></div>';
+          '</span><button type="button" class="bq-nav" data-n="1"' + (off >= 10 ? ' disabled' : '') + ' aria-label="Mes siguiente">›</button></div>';
+        h += '<div class="bq-meses">' + mes(ym) + (CEL ? '' : mes(sumaMes(ym, 1))) + '</div>';
+        h += '<div class="bq-pie"><button type="button" class="bq-borrar" data-x="1">Borrar</button><button type="button" class="bq-listo" data-p="">' + (n ? "Listo" : "Cerrar") + '</button></div>';
       } else if (abierto === "hu") {
         var hh = +busq.h || 2;
-        h += '<div class="cb-hu"><span>' + L.hu + '</span><div><button type="button" class="cb-mm" data-h="-1"' + (hh <= 1 ? ' disabled' : '') + '>−</button><b>' + hh + '</b><button type="button" class="cb-mm" data-h="1"' + (hh >= 4 ? ' disabled' : '') + '>+</button></div></div>' +
-          '<div class="cb-pie"><span></span><button type="button" class="cb-listo" data-p="">Listo</button></div>';
+        h += '<div class="bq-hu"><span>' + L.hu + '</span><div><button type="button" class="bq-mm" data-h="-1"' + (hh <= 1 ? ' disabled' : '') + '>−</button><b>' + hh + '</b><button type="button" class="bq-mm" data-h="1"' + (hh >= 4 ? ' disabled' : '') + '>+</button></div></div>' +
+          '<div class="bq-pie"><span></span><button type="button" class="bq-listo" data-p="">Listo</button></div>';
       }
       return h + '</div>';
     }
-    function pintar() { caja.innerHTML = '<div class="cb' + (op.arriba ? ' cb-up' : '') + '">' + (op.arriba ? panel() + barra() : barra() + panel()) + '</div>'; if (op.alPintar) { op.alPintar(!!abierto); } }
+    function pintar() { caja.innerHTML = '<div class="bq' + (op.arriba ? ' bq-up' : '') + '">' + (op.arriba ? panel() + barra() : barra() + panel()) + '</div>'; if (op.alPintar) { op.alPintar(!!abierto); } }
     function ir() {
       busq.z = z; guardar();
       var q = []; if (z) { q.push("zona=" + encodeURIComponent(z)); }
@@ -279,10 +279,10 @@
   // Recuadro de Wix (portada): solo la caja, fondo transparente. ?cel=1 versión celular · ?abre=arriba panel hacia arriba.
   function modoCaja() {
     document.documentElement.style.background = "transparent";
-    document.body.className += " cb-en" + (Q.get("cel") === "1" ? " cb-en-cel" : "");
+    document.body.className += " bq-en" + (Q.get("cel") === "1" ? " bq-en-cel" : "");
     var fj = document.createElement("link"); fj.rel = "stylesheet"; fj.href = "https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap"; document.head.appendChild(fj);
-    app.innerHTML = '<div id="cb-raiz"></div>';
-    cajaBusqueda(document.getElementById("cb-raiz"), { cel: Q.get("cel") === "1", arriba: Q.get("abre") === "arriba" });
+    app.innerHTML = '<div id="bq-raiz"></div>';
+    cajaBusqueda(document.getElementById("bq-raiz"), { cel: Q.get("cel") === "1", arriba: Q.get("abre") === "arriba" });
   }
 
   function modoBarra() {
