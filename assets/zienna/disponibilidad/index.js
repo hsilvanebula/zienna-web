@@ -27,9 +27,14 @@
   RUTAS["/alojamientos"] = "listado";
   RUTAS["/favoritos"] = "favoritos";
   RUTAS["/libro-de-reclamaciones"] = "reclamos";
+  RUTAS["/inicio"] = "inicio";
   var MODO = Q.get("modo") || RUTAS[RUTA] || "resultados";
   var PROP = Q.get("p") || FICHAS_RAPIDAS[RUTA] || "";
-  var APP = app;  // las piezas de la ficha rápida dibujan cada una en su propia caja (ver modoFicha)
+  var APP = app;
+  // Ícono del Libro de Reclamaciones (aviso del pie y cabecera de la página del libro).
+  var LIBRO_SVG = '<svg class="lr-ico" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="9" fill="#fff"/>' +
+    '<path d="M24 14c-3-2.4-7.4-3.3-12-3v22c4.6-.3 9 .6 12 3 3-2.4 7.4-3.3 12-3V11c-4.6-.3-9 .6-12 3z" fill="none" stroke="#b3261e" stroke-width="2.4" stroke-linejoin="round"/>' +
+    '<path d="M24 14v22M15.5 17.5c2.2 0 4.3.5 6 1.4M15.5 22.5c2.2 0 4.3.5 6 1.4M26.5 18.9c1.7-.9 3.8-1.4 6-1.4M26.5 23.9c1.7-.9 3.8-1.4 6-1.4" stroke="#b3261e" stroke-width="2" stroke-linecap="round"/></svg>';  // las piezas de la ficha rápida dibujan cada una en su propia caja (ver modoFicha)
   var LLAVE = "zienna_busqueda";
   var MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
   var MESES_C = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
@@ -57,7 +62,7 @@
       v = { ll: ull, sa: usa, h: uh >= 1 && uh <= 16 ? uh : (v.h || 2) };
       try { localStorage.setItem(LLAVE, JSON.stringify(v)); } catch (e) {}
     }
-    if (!v.ll || !v.sa || v.ll < hoy() || v.sa <= v.ll) { v = (MODO === "resultados" || MODO === "alojamiento" || MODO === "barrafija" || MODO === "fechas" || MODO === "tarjeta" || MODO === "detalle" || MODO === "cierre" || MODO === "ficha" || MODO === "listado" || MODO === "favoritos") ? { ll: "", sa: "", h: v.h || 2 } : { ll: hoy(), sa: manana(), h: v.h || 2 }; }
+    if (!v.ll || !v.sa || v.ll < hoy() || v.sa <= v.ll) { v = (MODO === "resultados" || MODO === "alojamiento" || MODO === "barrafija" || MODO === "fechas" || MODO === "tarjeta" || MODO === "detalle" || MODO === "cierre" || MODO === "ficha" || MODO === "listado" || MODO === "favoritos" || MODO === "inicio") ? { ll: "", sa: "", h: v.h || 2 } : { ll: hoy(), sa: manana(), h: v.h || 2 }; }
     return v;
   }
   function guardar() { try { localStorage.setItem(LLAVE, JSON.stringify(busq)); } catch (e) {} }
@@ -1733,7 +1738,7 @@
       '<div><b>CONTACTO</b><a href="' + WEB + '/contacto">info@bookzienna.com</a><a href="' + WEB + '/contacto">Formulario de contacto</a><span>Lima, Perú</span></div>' +
       '<div><b>ATENCIÓN Y REDES</b><span class="zw-redes"><a class="zw-ig" href="https://www.instagram.com/bookzienna/" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a><a class="zw-ig" href="https://www.facebook.com/p/Zienna-Living-Aparts-61594152062887/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8.5a.5.5 0 0 1 .5-.5z"/></svg></a><a class="zw-ig" href="https://www.tiktok.com/@bookzienna" target="_blank" rel="noopener" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 3 2.5 4.5 5 4.5"/></svg></a></span></div>' +
       '<div><b>INFORMACIÓN LEGAL</b><p><a href="' + WEB + '/politica-de-privacidad">Privacidad</a> • <a href="' + WEB + '/terminos-y-condiciones">Condiciones</a> • <a href="' + WEB + '/politica-de-cookies">Cookies</a></p>' +
-        '<a class="zw-lr" href="' + RAPIDA + '/libro-de-reclamaciones"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M8 7h7M8 11h7"/></svg> Libro de Reclamaciones</a></div>' +
+        '<a class="zw-lr" href="' + RAPIDA + '/libro-de-reclamaciones">' + LIBRO_SVG + '<span><b>LIBRO DE RECLAMACIONES</b><small>Ingresa aquí para registrar tu reclamo o queja</small></span></a></div>' +
       '</div><i class="zw-pie-l"></i><small>© ' + new Date().getFullYear() + ' ZIENNA LIVING & APARTS. Todos los derechos quedan reservados.</small></footer>';
     return { cab: cab, pie: pie };
   }
@@ -1986,14 +1991,14 @@
     var CEL = window.innerWidth < 700;
     document.body.className += " la-en" + (CEL ? " la-cel" : "");
     letraZienna();
-    var mw = marcoWeb(CEL, "Alojamientos"), zona = "", lista = null, res = null, dz = null;
+    var mw = marcoWeb(CEL, "Alojamientos"), zona = ["San Miguel", "San Isidro", "Lince"].indexOf(Q.get("zona") || "") >= 0 ? Q.get("zona") : "", lista = null, res = null, dz = null;
     var ORDEN = ["SM1006", "SI2105", "SI502", "SM310", "LINCE1504", "LINCE902"];
     var conFechas = function () { return !!(busq.ll && busq.sa); };
     APP.innerHTML = mw.cab + '<div class="la"><section class="la-h"><h1>Nuestros alojamientos</h1>' +
       '<p>Departamentos en San Isidro, San Miguel y Lince. Precio total visible antes de reservar.</p>' +
       '<a class="la-bar" id="la-bar" href="' + esc(urlBuscar("fechas")) + '"><span><small>LLEGADA</small><b id="la-ll"></b></span><span><small>SALIDA</small><b id="la-sa"></b></span>' +
       '<span><small>HUÉSPEDES</small><b id="la-h"></b></span><em>Buscar</em></a><p class="la-est" id="la-est"></p>' +
-      '<div class="la-chips" id="la-chips">' + ["", "San Miguel", "San Isidro", "Lince"].map(function (z) { return '<button type="button" data-z="' + z + '"' + (z ? '' : ' class="on"') + '>' + (z || "Todas") + '</button>'; }).join("") + '</div></section>' +
+      '<div class="la-chips" id="la-chips">' + ["", "San Miguel", "San Isidro", "Lince"].map(function (z) { return '<button type="button" data-z="' + z + '"' + (z === zona ? ' class="on"' : '') + '>' + (z || "Todas") + '</button>'; }).join("") + '</div></section>' +
       '<div class="la-g" id="la-g"><p class="la-vacio">Cargando…</p></div>' +
       '<section class="la-banda"><div><b id="la-bt">Reserva directo y paga 20\u00a0% menos</b><span id="la-bs">Promoción exclusiva a partir de 2 noches.</span></div><a href="' + esc(urlBuscar("fechas")) + '">Ver fechas libres</a></section></div>' + mw.pie;
     ligarMarco();
@@ -2038,6 +2043,128 @@
       }).catch(function () { res = {}; pintar(); });
     }
     pintar();
+  }
+
+  // ───────── Portada propia (Hugo, 19-11-2026: opción A «Cine»; mientras no haya video, fotos con transiciones) ─────────
+  // Fotos a pantalla completa que se funden una en otra con un acercamiento lento; encima, el buscador. ES · EN · PT
+  // (por ahora solo esta página; las fichas siguen en español). Idioma: ?lang=, lo último elegido, o el del navegador.
+  var PORTADA_FOTOS = [
+    ["b4147d_6cadcd4b83ef46659e5318c6e31b3c72~mv2.jpeg", "SM1006"], ["d58443_c497c759fbc54183b6f4c4445e5d263e~mv2.jpg", "SI2105"],
+    ["b4147d_d18a8a9007524776a9cc422714918d40~mv2.jpeg", "SM1006"], ["b4147d_d4f19b6c10fa4b8e9195e3bad5d26041~mv2.png", "SM310"],
+    ["b4147d_7617ffe95430420e97fb4bbaac7a1ac0~mv2.jpeg", "SM1006"], ["b4147d_c2df8fcba89f4feca5d07781c423e4a1~mv2.png", "LINCE1504"],
+    ["b4147d_9b8f57dd925f4913a442f0b5b72829f9~mv2.jpeg", "SI502"]];
+  var PORTADA_T = {
+    es: { promo: "Reserva directo y paga <b>20 % menos</b> · desde 2 noches", nav: ["Alojamientos", "Para Propietarios", "Limpieza"], reservar: "Reservar",
+      ceja: "Zienna Living & Aparts · Lima", t1: "Vive Lima frente al mar",
+      t2: "Departamentos de diseño en San Isidro, San Miguel y Lince. Llegada autónoma, limpieza incluida y precio final sin sorpresas.",
+      zona: "Zona", todas: "Todas las zonas", ll: "Llegada", sa: "Salida", hu: "Huéspedes", agregar: "Agregar fecha", huesped: ["huésped", "huéspedes"], buscar: "Buscar",
+      fotos: ["Piscina frente al mar · San Miguel", "Piscina con vista · San Isidro", "Atardecer en tu terraza · San Miguel", "Piscina frente al mar · San Miguel", "Sala con vista al Pacífico · San Miguel", "Piscina con vista a la ciudad · Lince", "Piscina al atardecer · San Isidro"],
+      puntos: [["Frente al mar", "Vistas al Pacífico y a la ciudad desde pisos altos."], ["Llegada autónoma", "Tu propia clave: entras desde las 3:00 pm, sin esperar a nadie."], ["Limpieza incluida", "El precio que ves es el final. No pagas nada más."], ["Atención directa", "Te respondemos por WhatsApp, sin intermediarios."]],
+      elige: "Elige tu zona", verTodos: "Ver todos los alojamientos",
+      zonas: [["San Miguel", "Frente al mar, con vista al Pacífico"], ["San Isidro", "Vista al mar y calles arboladas"], ["Lince", "Céntrico, con piscina y vista a la ciudad"]],
+      menu: "Abrir menú", nota: "Elige tus fechas en el siguiente paso." },
+    en: { promo: "Book direct and save <b>20 %</b> · from 2 nights", nav: ["Stays", "Property owners", "Cleaning"], reservar: "Book now",
+      ceja: "Zienna Living & Aparts · Lima", t1: "Live Lima by the sea",
+      t2: "Design apartments in San Isidro, San Miguel and Lince. Self check-in, cleaning included and a final price with no surprises.",
+      zona: "Area", todas: "All areas", ll: "Check-in", sa: "Check-out", hu: "Guests", agregar: "Add date", huesped: ["guest", "guests"], buscar: "Search",
+      fotos: ["Oceanfront pool · San Miguel", "Pool with a view · San Isidro", "Sunset on your terrace · San Miguel", "Oceanfront pool · San Miguel", "Living room facing the Pacific · San Miguel", "Pool with city views · Lince", "Pool at sunset · San Isidro"],
+      puntos: [["By the sea", "Pacific and city views from high floors."], ["Self check-in", "Your own door code: arrive from 3:00 pm, no waiting."], ["Cleaning included", "The price you see is the final price. Nothing else to pay."], ["Direct support", "We reply on WhatsApp, no middlemen."]],
+      elige: "Choose your area", verTodos: "See all stays",
+      zonas: [["San Miguel", "Oceanfront, facing the Pacific"], ["San Isidro", "Sea views and tree-lined streets"], ["Lince", "Central, with a pool and city views"]],
+      menu: "Open menu", nota: "Pick your dates in the next step." },
+    pt: { promo: "Reserve direto e pague <b>20 % menos</b> · a partir de 2 noites", nav: ["Hospedagens", "Proprietários", "Limpeza"], reservar: "Reservar",
+      ceja: "Zienna Living & Aparts · Lima", t1: "Viva Lima de frente para o mar",
+      t2: "Apartamentos de design em San Isidro, San Miguel e Lince. Check-in autônomo, limpeza incluída e preço final sem surpresas.",
+      zona: "Região", todas: "Todas as regiões", ll: "Chegada", sa: "Saída", hu: "Hóspedes", agregar: "Adicionar data", huesped: ["hóspede", "hóspedes"], buscar: "Buscar",
+      fotos: ["Piscina de frente para o mar · San Miguel", "Piscina com vista · San Isidro", "Pôr do sol no seu terraço · San Miguel", "Piscina de frente para o mar · San Miguel", "Sala com vista para o Pacífico · San Miguel", "Piscina com vista para a cidade · Lince", "Piscina ao pôr do sol · San Isidro"],
+      puntos: [["De frente para o mar", "Vista para o Pacífico e para a cidade, em andares altos."], ["Check-in autônomo", "Sua própria senha: entre a partir das 15h, sem esperar ninguém."], ["Limpeza incluída", "O preço que você vê é o final. Nada mais a pagar."], ["Atendimento direto", "Respondemos pelo WhatsApp, sem intermediários."]],
+      elige: "Escolha a região", verTodos: "Ver todas as hospedagens",
+      zonas: [["San Miguel", "De frente para o mar, com vista para o Pacífico"], ["San Isidro", "Vista para o mar e ruas arborizadas"], ["Lince", "Central, com piscina e vista para a cidade"]],
+      menu: "Abrir menu", nota: "Escolha as datas no próximo passo." }
+  };
+  function modoInicio() {
+    var CEL = window.innerWidth < 760, $ = function (id) { return document.getElementById(id); };
+    var lang = (Q.get("lang") || "").toLowerCase();
+    if (!PORTADA_T[lang]) { try { lang = localStorage.getItem("zlang") || ""; } catch (e) { lang = ""; } }
+    if (!PORTADA_T[lang]) { lang = /^pt/i.test(navigator.language || "") ? "pt" : /^en/i.test(navigator.language || "") ? "en" : "es"; }
+    document.body.className += " in-en" + (CEL ? " in-cel" : "");
+    letraZienna();
+    var mw = marcoWeb(CEL, "");
+    var actual = 0, timer = null, zonaSel = "";
+    var ZFOTO = { "San Miguel": "b4147d_7617ffe95430420e97fb4bbaac7a1ac0~mv2.jpeg", "San Isidro": "d58443_c497c759fbc54183b6f4c4445e5d263e~mv2.jpg", "Lince": "b4147d_d05b7a52aca34774b80ddf1f81ff7f5e~mv2.png" };
+    function foto(id) { return CEL ? wixFoto(id, 900, 1500) : wixFoto(id, 1920, 1080); }
+    function urlListado(z) { var u = LISTADO, q = []; if (z) { q.push("zona=" + encodeURIComponent(z)); } if (busq.ll && busq.sa) { q.push("ll=" + busq.ll, "sa=" + busq.sa, "h=" + (busq.h || 2)); } return u + (q.length ? "?" + q.join("&") : ""); }
+    function pintar() {
+      var T = PORTADA_T[lang], h = +busq.h || 2;
+      document.documentElement.lang = lang;
+      var navs = [LISTADO, RAPIDA + "/propietarios", RAPIDA + "/limpieza"];
+      var idi = '<div class="in-idi" id="in-idi">' + ["es", "en", "pt"].map(function (l) { return '<button type="button" data-l="' + l + '"' + (l === lang ? ' class="on"' : '') + '>' + l.toUpperCase() + '</button>'; }).join("") + '</div>';
+      var opH = ""; for (var i = 1; i <= 6; i++) { opH += '<option value="' + i + '"' + (i === h ? " selected" : "") + '>' + i + " " + T.huesped[i === 1 ? 0 : 1] + '</option>'; }
+      APP.innerHTML = '<div class="in-promo">' + T.promo + '</div>' +
+        '<section class="in-hero"><div class="in-fotos" id="in-fotos">' + PORTADA_FOTOS.map(function (f, k) { return '<div class="in-f' + (k === actual ? ' on' : '') + '" data-k="' + k + '"' + (k < 2 ? ' style="background-image:url(\'' + foto(f[0]) + '\')"' : '') + '></div>'; }).join("") + '</div>' +
+        '<div class="in-velo"></div>' +
+        '<header class="in-cab"><a class="in-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_blanco.png" alt="Zienna Living & Aparts"></a>' +
+        (CEL ? idi + '<button type="button" class="in-menu" id="in-menu" aria-label="' + T.menu + '" aria-expanded="false"><i></i><i></i><i></i></button>' +
+          '<nav class="in-nav-cel" id="in-nav">' + T.nav.map(function (t, k) { return '<a href="' + navs[k] + '">' + t + '</a>'; }).join("") + '<a class="in-res" href="' + LISTADO + '">' + T.reservar + '</a></nav>' :
+          '<nav class="in-nav">' + T.nav.map(function (t, k) { return '<a href="' + navs[k] + '">' + t + '</a>'; }).join("") + '</nav>' + idi + '<a class="in-res" href="' + LISTADO + '">' + T.reservar + '</a>') + '</header>' +
+        '<div class="in-centro"><p class="in-ceja">' + esc(T.ceja) + '</p><h1>' + esc(T.t1) + '</h1><p class="in-sub">' + esc(T.t2) + '</p>' +
+        '<form class="in-barra" id="in-barra"><label class="in-c in-zona"><small>' + T.zona + '</small><select id="in-z"><option value="">' + T.todas + '</option><option>San Miguel</option><option>San Isidro</option><option>Lince</option></select></label>' +
+        '<a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : T.agregar) + '</b></a>' +
+        '<a class="in-c" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : T.agregar) + '</b></a>' +
+        '<label class="in-c in-hu"><small>' + T.hu + '</small><select id="in-h">' + opH + '</select></label>' +
+        '<button type="submit" class="in-buscar">' + T.buscar + '</button></form></div>' +
+        '<div class="in-pie-hero"><span class="in-cap" id="in-cap">' + esc(T.fotos[actual]) + '</span><span class="in-puntos" id="in-puntos">' +
+        PORTADA_FOTOS.map(function (f, k) { return '<button type="button" data-k="' + k + '"' + (k === actual ? ' class="on"' : '') + ' aria-label="' + (k + 1) + '"><i></i></button>'; }).join("") + '</span></div></section>' +
+        '<section class="in-sec in-ptos">' + T.puntos.map(function (x) { return '<div><small>' + esc(x[0]) + '</small><p>' + esc(x[1]) + '</p></div>'; }).join("") + '</section>' +
+        '<section class="in-sec"><div class="in-sec-cab"><h2>' + esc(T.elige) + '</h2><a href="' + LISTADO + '">' + esc(T.verTodos) + ' →</a></div><div class="in-zonas">' +
+        T.zonas.map(function (z) { return '<a class="in-zn" href="' + esc(urlListado(z[0])) + '"><span class="in-zn-img" style="background-image:url(\'' + wixFoto(ZFOTO[z[0]], 900, 1100) + '\')"></span><span class="in-zn-t"><b>' + esc(z[0]) + '</b><em>' + esc(z[1]) + '</em></span></a>'; }).join("") +
+        '</div></section>' + mw.pie;
+      $("in-z").value = zonaSel;
+      $("in-z").addEventListener("change", function () { zonaSel = this.value; });
+      $("in-h").addEventListener("change", function () { busq.h = +this.value; guardar(); });
+      $("in-barra").addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        irA(busq.ll && busq.sa && !zonaSel ? urlBuscar() : urlListado(zonaSel));
+      });
+      $("in-idi").addEventListener("click", function (ev) {
+        var b = ev.target.closest("button[data-l]"); if (!b) { return; }
+        lang = b.getAttribute("data-l"); try { localStorage.setItem("zlang", lang); } catch (e) {}
+        pintar();
+      });
+      $("in-puntos").addEventListener("click", function (ev) { var b = ev.target.closest("button[data-k]"); if (b) { ir(+b.getAttribute("data-k")); } });
+      var m = $("in-menu");
+      if (m) { m.addEventListener("click", function () { var n = $("in-nav"), ab = n.classList.toggle("abierto"); m.classList.toggle("abierto", ab); m.setAttribute("aria-expanded", ab ? "true" : "false"); }); }
+      ligarMarco();
+      arrancar();
+    }
+    // Precarga la foto siguiente antes de mostrarla, para que la transición nunca enseñe un fondo vacío.
+    function cargar(k, listo) {
+      var el = document.querySelector('.in-f[data-k="' + k + '"]'); if (!el) { return; }
+      if (el.style.backgroundImage) { if (listo) { listo(); } return; }
+      var im = new Image(), u = foto(PORTADA_FOTOS[k][0]);
+      im.onload = im.onerror = function () { el.style.backgroundImage = "url('" + u + "')"; if (listo) { listo(); } };
+      im.src = u;
+    }
+    function ir(k) {
+      cargar(k, function () {
+        var fs = document.querySelectorAll(".in-f"), ps = document.querySelectorAll("#in-puntos button");
+        if (!fs.length) { return; }
+        fs[actual].classList.remove("on"); fs[actual].classList.add("sale"); var viejo = fs[actual];
+        setTimeout(function () { viejo.classList.remove("sale"); }, 1800);
+        actual = k; fs[actual].classList.add("on");
+        [].forEach.call(ps, function (b, j) { b.classList.toggle("on", j === actual); });
+        $("in-cap").textContent = PORTADA_T[lang].fotos[actual];
+        cargar((actual + 1) % PORTADA_FOTOS.length);
+        arrancar();
+      });
+    }
+    function arrancar() {
+      clearTimeout(timer);
+      if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+      timer = setTimeout(function () { ir((actual + 1) % PORTADA_FOTOS.length); }, 6500);
+    }
+    pintar();
+    cargar(1);
   }
 
   function modoLimpieza() {
@@ -2367,11 +2494,11 @@
     }
     llamar("reclamos.proveedor").then(function (P) {
       var hoyTxt = P.hoy.split("-").reverse().join("/");
-      $("lr").innerHTML = '<h1>Libro de Reclamaciones</h1>' +
+      $("lr").innerHTML = '<div class="lr-tit">' + LIBRO_SVG + '<div><h1>Libro de Reclamaciones</h1><p class="lr-sub">Hoja de reclamación virtual · Código de identificación <b>' + esc(P.codigo || "") + '</b></p></div></div>' +
         '<div class="lr-prov"><div><small>PROVEEDOR</small><b>' + esc(P.razon_social) + '</b><span>RUC ' + esc(P.ruc) + ' · ' + esc(P.marca) + '</span></div>' +
         '<div><small>DOMICILIO</small><span>' + esc(P.domicilio) + '</span></div><div><small>CORREO DE ATENCIÓN</small><span>' + esc(P.correo) + '</span></div>' +
         '<div><small>FECHA</small><span>' + hoyTxt + '</span></div></div>' +
-        '<p class="lr-nota">Te responderemos en un plazo no mayor a <b>' + P.plazo + ' días hábiles</b> (improrrogable). Al registrar tu hoja se genera un número correlativo y te enviamos una copia a tu correo como constancia.</p>' +
+        '<p class="lr-nota">Te responderemos en un plazo no mayor a <b>' + P.plazo + ' días hábiles</b> (improrrogable). Al registrar tu hoja se le asigna su número correlativo (por ejemplo, N.° 000000001-' + esc(P.hoy.slice(0, 4)) + ') y te enviamos una copia a tu correo como constancia.</p>' +
         '<form id="lr-f" novalidate>' +
         '<h2>1. Tipo</h2><div class="lr-tipos">' +
         '<label><input type="radio" name="lr-tipo" value="Reclamo"><span><b>Reclamo</b>Disconformidad relacionada con el servicio o producto (por ejemplo, la estadía o la limpieza).</span></label>' +
@@ -2411,7 +2538,8 @@
           acepto: 1, sitio: v("lr-sitio") }).then(function (r) {
           var lim = String(r.fecha_limite || "").split("-").reverse().join("/");
           $("lr").innerHTML = '<div class="lr-listo"><div class="lr-ok">✓</div><h1>Registramos tu ' + esc(t.value.toLowerCase()) + '</h1>' +
-            '<p class="lr-num">N.° de hoja <b>' + esc(r.numero) + '</b></p>' +
+            '<p class="lr-num">Hoja de reclamación N.° <b>' + esc(r.numero) + '</b></p>' +
+            '<p class="lr-cod">Código de identificación ' + esc(r.codigo || "") + (r.registro ? ' · Registrada el ' + esc(r.registro) : '') + '</p>' +
             '<p>' + (r.correo_enviado ? 'Te enviamos una copia a <b>' + esc(v("lr-cor")) + '</b> como constancia.' : 'Guarda este número: es tu constancia. La copia por correo te llegará en breve.') +
             ' Te responderemos a más tardar el <b>' + esc(lim) + '</b>.</p><a class="lr-btn" href="' + LISTADO + '">Volver a la web</a></div>';
           window.scrollTo(0, 0);
@@ -2442,6 +2570,7 @@
   else if (MODO === "cierre" && PROP) { modoCierre(); }
   else if (MODO === "ficha" && PROP) { modoFicha(); }
   else if (MODO === "listado") { modoListado(); }
+  else if (MODO === "inicio") { modoInicio(); }
   else if (MODO === "favoritos") { modoFavoritos(); }
   else { modoResultados(); }
   if (["ficha", "listado", "favoritos", "limpieza", "propietarios", "buscar", "galeria", "portada", "agenda", "contacto"].indexOf(MODO) >= 0) { rastrear("visita", { p: PROP }); }
