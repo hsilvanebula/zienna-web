@@ -279,10 +279,12 @@
   // Recuadro de Wix (portada): solo la caja, fondo transparente. ?cel=1 versión celular · ?abre=arriba panel hacia arriba.
   function modoCaja() {
     document.documentElement.style.background = "transparent";
-    document.body.className += " bq-en" + (Q.get("cel") === "1" ? " bq-en-cel" : "");
+    // Un solo iframe en Wix: en el celular Wix lo hace angosto y aquí se pasa sola a la caja de 2×2.
+    var cel = Q.get("cel") === "1" || window.innerWidth < 600;
+    document.body.className += " bq-en" + (cel ? " bq-en-cel" : "");
     var fj = document.createElement("link"); fj.rel = "stylesheet"; fj.href = "https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap"; document.head.appendChild(fj);
     app.innerHTML = '<div id="bq-raiz"></div>';
-    cajaBusqueda(document.getElementById("bq-raiz"), { cel: Q.get("cel") === "1", arriba: Q.get("abre") === "arriba" });
+    cajaBusqueda(document.getElementById("bq-raiz"), { cel: cel, arriba: Q.get("abre") === "arriba" });
   }
 
   function modoBarra() {

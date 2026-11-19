@@ -2043,6 +2043,11 @@ body.bq-en .bq:not(.bq-up) { margin-top: 2px; }
    en x 40–2048, y 40–190): la barra viva calza encima, en proporción al ancho del iframe. */
 body.bq-en:not(.bq-en-cel) #bq-raiz { padding: 0; }
 body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) { margin: 1.92vw 1.73vw 0 1.92vw; }
+/* Celular: imagen caja_fechas_distrito_cel.png (830×334, barra opaca en x 40–794, y 40–278). */
+body.bq-en-cel #bq-raiz { padding: 0; }
+body.bq-en-cel .bq:not(.bq-up) { margin: 4.82vw 4.34vw 0 4.82vw; }
+body.bq-en-cel .bq:not(.bq-up) .bq-bar { height: 28.67vw; min-height: 76px; box-sizing: border-box; }
+body.bq-en-cel .bq:not(.bq-up) .bq-c { padding: 0 10px; }
 body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) .bq-bar { height: 7.2vw; min-height: 56px; box-sizing: border-box; }
 .bq-bar { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr) 118px; height: 73px; background: #fff; border: 1px solid #dcd9cb; box-shadow: 0 14px 22px -12px rgba(0,0,0,.22); }
 .bq-bar.bq-cel { grid-template-columns: minmax(0,1fr) minmax(0,1fr); height: 117px; }
