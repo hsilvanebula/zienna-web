@@ -2039,6 +2039,11 @@ body.bq-en #bq-raiz { position: relative; padding: 0 2px; }
 .bq { position: relative; font-family: Jost, Manrope, sans-serif; color: #141210; }
 body.bq-en .bq-up { position: absolute; left: 2px; right: 2px; bottom: 16px; }
 body.bq-en .bq:not(.bq-up) { margin-top: 2px; }
+/* En Wix (PC) el iframe mide lo mismo que la imagen de respaldo caja_fechas_distrito_pc.png (2084×240, barra opaca
+   en x 40–2048, y 40–190): la barra viva calza encima, en proporción al ancho del iframe. */
+body.bq-en:not(.bq-en-cel) #bq-raiz { padding: 0; }
+body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) { margin: 1.92vw 1.73vw 0 1.92vw; }
+body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) .bq-bar { height: 7.2vw; min-height: 56px; box-sizing: border-box; }
 .bq-bar { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr) 118px; height: 73px; background: #fff; border: 1px solid #dcd9cb; box-shadow: 0 14px 22px -12px rgba(0,0,0,.22); }
 .bq-bar.bq-cel { grid-template-columns: minmax(0,1fr) minmax(0,1fr); height: 117px; }
 .bq-c { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; border: 0; border-right: 1px solid #dcd9cb; background: #fff; padding: 0 14px; cursor: pointer; font: inherit; color: inherit; min-width: 0; }
