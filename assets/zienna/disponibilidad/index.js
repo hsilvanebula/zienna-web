@@ -13,8 +13,11 @@
   try { var zd = document.getElementById("zienna-datos"); if (zd) { DATOS = JSON.parse(zd.textContent); } } catch (e) { DATOS = null; }
   var API = BASE + "/api/method/zienna.api.stays.disponibilidad_web.";
   var WA = app.getAttribute("data-wa"), WEB = app.getAttribute("data-web");
-  // Fichas y Alojamientos viven en registro.bookzienna.com desde el 18-11-2026 (páginas rápidas, sin Wix).
-  var RAPIDA = EN_APP ? location.origin : (app.getAttribute("data-rapida") || BASE), LISTADO = RAPIDA + "/alojamientos";
+  // RAPIDA = páginas del servidor (limpieza, propietarios, favoritos, libro). Las 8 fichas y Alojamientos viven como
+  // páginas fijas en web.bookzienna.com desde el 19-11-2026 (FIJAS); en localhost se quedan en el mismo sitio.
+  var LOCAL = /^(localhost|127\.0\.0\.1)$/.test(location.hostname);
+  var RAPIDA = EN_APP ? location.origin : (app.getAttribute("data-rapida") || BASE);
+  var FIJAS = LOCAL ? location.origin : "https://web.bookzienna.com", LISTADO = FIJAS + "/alojamientos/";
   var Q = new URLSearchParams(location.search);
   // Direcciones cortas (Hugo, 18-11-2026): registro.bookzienna.com/limpieza y /propietarios abren esas páginas solas.
   var RUTAS = { "/limpieza": "limpieza", "/propietarios": "propietarios" };
@@ -47,6 +50,13 @@
   function leer() {
     var v = {};
     try { v = JSON.parse(localStorage.getItem(LLAVE) || "{}"); } catch (e) { v = {}; }
+    // Fechas en la dirección (?ll=&sa=&h=): las trae quien viene de otro sitio de Zienna (registro ↔ web), porque
+    // el localStorage no se comparte entre dominios. Mandan sobre lo guardado.
+    var uq = new URLSearchParams(location.search), ull = uq.get("ll") || "", usa = uq.get("sa") || "", uh = parseInt(uq.get("h"), 10);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(ull) && /^\d{4}-\d{2}-\d{2}$/.test(usa) && ull >= hoy() && usa > ull) {
+      v = { ll: ull, sa: usa, h: uh >= 1 && uh <= 16 ? uh : (v.h || 2) };
+      try { localStorage.setItem(LLAVE, JSON.stringify(v)); } catch (e) {}
+    }
     if (!v.ll || !v.sa || v.ll < hoy() || v.sa <= v.ll) { v = (MODO === "resultados" || MODO === "alojamiento" || MODO === "barrafija" || MODO === "fechas" || MODO === "tarjeta" || MODO === "detalle" || MODO === "cierre" || MODO === "ficha" || MODO === "listado" || MODO === "favoritos") ? { ll: "", sa: "", h: v.h || 2 } : { ll: hoy(), sa: manana(), h: v.h || 2 }; }
     return v;
   }
@@ -121,7 +131,8 @@
     return BASE + "/disponibilidad?modo=solicitud&p=" + encodeURIComponent(prop) + "&ll=" + encodeURIComponent(busq.ll) + "&sa=" + encodeURIComponent(busq.sa) + "&h=" + encodeURIComponent(busq.h || 2);
   }
   function hrefReservar(prop, f) { return busq.ll && busq.sa && f && f.libre ? urlSolicitud(prop) : "#"; }
-  function urlFicha(a) { return a && a.ficha ? RAPIDA + "/" + a.ficha : LISTADO; }
+  function conFechasURL(u) { return busq.ll && busq.sa ? u + "?ll=" + encodeURIComponent(busq.ll) + "&sa=" + encodeURIComponent(busq.sa) + "&h=" + encodeURIComponent(busq.h || 2) : u; }
+  function urlFicha(a) { return a && a.ficha ? conFechasURL(FIJAS + "/" + a.ficha + "/") : LISTADO; }
 
   // ¿Versión de celular? Dentro de Wix manda la FORMA del recuadro, no el ancho: en tablet (≈ 760 px) Wix usa su
   // diseño de celular estirado y el recuadro queda ancho pero altísimo; si se decidía por ancho salía la versión
@@ -1025,7 +1036,7 @@
     app.innerHTML = '<div class="sl"><p class="sl-txt">Preparando tu solicitud…</p></div>';
     llamar("buscar", { llegada: ll, salida: sa, huespedes: hu }).then(function (d) {
       var f = d.resultados.filter(function (x) { return x.propiedad === PROP; })[0];
-      var volver = f && f.ficha ? RAPIDA + "/" + f.ficha : LISTADO;
+      var volver = f && f.ficha ? conFechasURL(FIJAS + "/" + f.ficha + "/") : LISTADO;
       if (!f) { aviso("Alojamiento no disponible", "No encontramos ese alojamiento.", LISTADO, "Ver alojamientos"); return; }
       if (!f.libre) {
         var m = f.motivo === "minimo" ? "Para esas fechas pedimos al menos " + f.minimo + " noches." : f.motivo === "capacidad" ? "Este alojamiento admite hasta " + f.capacidad + " huéspedes." : "Esas fechas ya no están libres.";
@@ -1271,8 +1282,8 @@
     document.body.className += " gl-en";
     app.innerHTML = '<p class="dz-nota" style="padding:20px">Cargando…</p>';
     llamarSWR("ficha", { propiedad: PROP }, function (f) {
-      var fotos = f.galeria || [], volver = f.ficha ? RAPIDA + "/" + f.ficha : LISTADO;
-      if (/^https:\/\/registro\.bookzienna\.com\/[a-z0-9]+\/?$/.test(document.referrer)) { volver = document.referrer; }
+      var fotos = f.galeria || [], volver = f.ficha ? FIJAS + "/" + f.ficha + "/" : LISTADO;
+      if (/^https:\/\/(registro|web)\.bookzienna\.com\/[a-z0-9]+\/?(\?.*)?$/.test(document.referrer)) { volver = document.referrer; }
       document.title = "Fotos · " + (f.titulo || "Zienna");
       var h = marcoPaso("Alojamientos", volver, false) ?
         '<div class="gl"><a class="gl-atras" href="' + esc(volver) + '">‹ Volver al alojamiento</a><h1>' + esc(f.titulo) + '</h1><p class="gl-sub">Todas las fotos · ' + esc(f.subtitulo) + ' · ' + fotos.length + ' fotos</p><div class="gl-grid">' :
@@ -1369,7 +1380,7 @@
       var fb = document.createElement("link"); fb.rel = "stylesheet";
       fb.href = "https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500&display=swap"; document.head.appendChild(fb);
     }
-    var volver = /^https:\/\/(www\.)?bookzienna\.com/.test(document.referrer) ? document.referrer : WEB;
+    var volver = /^https:\/\/((www|web)\.)?bookzienna\.com/.test(document.referrer) ? document.referrer : WEB;
     var h = (PAGINA ? (marcoPaso(marcado === "administracion" ? "Para Propietarios" : marcado === "limpieza" ? "Limpieza" : "", volver, false) ? '' :
       '<header class="ct-cab"><a class="ct-volver" href="' + esc(volver) + '">‹ Volver</a><img src="' + ASSET + 'zienna_logo.png" alt="Zienna living &amp; aparts"></header>') + '<div class="ct-wrap">' : '') +
       (SOLO ? '<div class="ct-tit"><h1>' + esc(TITULOS[marcado][0]) + '</h1><p>' + esc(TITULOS[marcado][1]) + '</p></div>' : '') +
@@ -1441,7 +1452,7 @@
     var fl = document.createElement("link"); fl.rel = "stylesheet";
     fl.href = "https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500&family=Manrope:wght@400;500;600;700&display=swap";
     document.head.appendChild(fl);
-    var volver = /^https:\/\/((www|registro)\.)?bookzienna\.com/.test(document.referrer) && !/modo=buscar/.test(document.referrer) ? document.referrer : WEB;
+    var volver = /^https:\/\/((www|registro|web)\.)?bookzienna\.com/.test(document.referrer) && !/modo=buscar/.test(document.referrer) ? document.referrer : WEB;
     var esFecha = /^\d{4}-\d{2}-\d{2}$/, lista = null, empujado = false, off = 0;
     function leerURL() {
       var q = new URLSearchParams(location.search), ll = q.get("ll") || "", sa = q.get("sa") || "", h = parseInt(q.get("h"), 10);
@@ -1879,7 +1890,7 @@
       if (c) {
         ev.preventDefault(); ev.stopPropagation();
         var t = document.querySelector("h1"), nombre = t ? t.textContent.replace(/\s+/g, " ").replace(" •", ",").trim() : "Zienna";
-        compartir(nombre, "Mira este alojamiento de Zienna: " + nombre + ".", RAPIDA + location.pathname, PROP);
+        compartir(nombre, "Mira este alojamiento de Zienna: " + nombre + ".", FIJAS + location.pathname.replace(/\/$/, ""), PROP);
       }
     }, true);
   }
@@ -2070,7 +2081,7 @@
     anchoPC("#dz-app");
     document.body.className += " ag-en";
     letraZienna();
-    var volver = /^https:\/\/((www|registro)\.)?bookzienna\.com/.test(document.referrer) ? document.referrer : "/limpieza";  // la página rápida
+    var volver = /^https:\/\/((www|registro|web)\.)?bookzienna\.com/.test(document.referrer) ? document.referrer : "/limpieza";  // la página rápida
     var C = null, cup = null, paso = 1, listo = null;
     var e = { s: Q.get("s") || "", t: "", d: "", x: {}, f: "", h: "", fuera: false, plan: Q.get("plan") === "1", ses: [] };
     var PASOS = ["Servicio", "Tu depa", "Día y hora", "Tus datos"];
