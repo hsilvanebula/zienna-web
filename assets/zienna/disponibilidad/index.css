@@ -2097,3 +2097,42 @@ body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) .bq-bar { height: 7.2vw; min-height: 
 .in-cel .in-caja { position: relative; left: auto; bottom: auto; transform: none; width: 100%; margin-bottom: 170px; }
 .in-hero { overflow: visible; }
 .in-fotos { overflow: hidden; }
+
+/* ---------- «Nuestros alojamientos», opción A de Hugo (19-11-2026): limpia, tipo Airbnb, en PC y celular ---------- */
+.pt-alo .pt-cab { margin-bottom: 32px; }
+.pt-alo h2 { font-size: 40px; line-height: 1.1; }
+.pt-alo .pt-cab p { margin: 8px 0 0; font-size: 16px; color: #6b665e; max-width: none; }
+.pt-alo .pt-cab > a { font-size: 15px; font-weight: 600; text-decoration: none !important; border-bottom: 1px solid #111; padding-bottom: 2px; white-space: nowrap; }
+.pt-alo .pt-cards { gap: 52px 28px; }
+.pt-alo .pt-card { gap: 0; }
+.pt-alo .pt-img { border-radius: 16px; margin-bottom: 14px; }
+.pt-alo .pt-c1 { font-size: 16.5px; line-height: 1.35; gap: 14px; }
+.pt-alo .pt-c1 b { font-size: 16.5px; font-weight: 600; }
+.pt-alo .pt-c1 > span { font-weight: 500; white-space: nowrap; }
+.pt-alo .pt-c2 { font-size: 14.5px; color: #6b665e; margin-top: 3px; }
+.pt-alo .pt-c3 { font-size: 15px; margin-top: 8px; }
+.pt-cel .pt-alo .pt-cab { flex-direction: row; align-items: flex-end; gap: 14px; margin-bottom: 22px; }
+.pt-cel .pt-alo h2 { font-size: 30px; }
+.pt-cel .pt-alo .pt-cab p { font-size: 14px; }
+.pt-cel .pt-alo .pt-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 34px; }
+.pt-cel .pt-alo .pt-card { display: flex; flex-direction: column; }
+.pt-cel .pt-alo .pt-img { grid-row: auto; aspect-ratio: 3 / 2; height: auto; margin: 0 0 14px; border-radius: 16px; }
+.pt-cel .pt-alo .pt-c1 b { min-height: 0; }
+/* La misma letra de la opción A en las demás listas de alojamientos (Hugo: «que se aplique en todas las páginas»). */
+.la-h h1 { font-weight: 500; font-size: 40px; line-height: 1.1; }
+.la-h > p { font-size: 16px; color: #6b665e; }
+.la-g { gap: 52px 28px; }
+.la-c { gap: 3px; font-size: 14.5px; }
+.la-f { border-radius: 16px; margin-bottom: 11px; }
+.la-1 { font-size: 16.5px; line-height: 1.35; gap: 14px; }
+.la-1 span { font-weight: 500; }
+.la-2 { color: #6b665e; }
+.bu-card { margin-bottom: 40px; }
+.bu-info { padding-top: 14px; }
+.bu-info > b { font-size: 16.5px; line-height: 1.35; }
+.bu-dist { font-size: 14.5px; color: #6b665e; }
+.fc-card { gap: 3px; }
+.fc-img { border-radius: 16px; margin-bottom: 11px; }
+.fc-card b { font-weight: 600; font-size: 16.5px; line-height: 1.35; }
+.fc-card span:last-child { font-size: 14.5px; color: #6b665e; }
+.la-cel .la-h h1 { font-size: 30px; } .la-cel .la-g { gap: 34px; }
