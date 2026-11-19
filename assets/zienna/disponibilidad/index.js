@@ -2231,19 +2231,19 @@
     if (!I18N[lang]) { lang = String(navigator.language || "es").slice(0, 2).toLowerCase(); }
     LANG = I18N[lang] ? lang : "es";
     document.documentElement.lang = LANG;
-    document.body.className += " bn-en";
+    document.body.className += " ben-en";
     letraZienna();
     var waT = "https://wa.me/" + WA + "?text=" + encodeURIComponent(TX("sv_wa"));
-    var pr = '<div class="bn-pr"><span>' + TX("sv_ida") + '<b>S/ 90</b></span><span>' + TX("sv_vue") + '<b>S/ 90</b></span><span>' + TX("sv_iv") + '<b>S/ 170</b></span></div>';
-    app.innerHTML = '<div class="bn"><a class="bn-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_h.png" alt="Zienna Living & Aparts"></a>' +
-      '<div class="bn-cab"><span class="bn-ok">✓ ' + TX("bn_ok") + '</span><h1>' + TX("bn_t") + '</h1><p>' + TX("bn_sub") + '</p></div><div class="bn-g">' +
-      '<div class="bn-c"><span class="bn-f" style="background-image:url(\'' + ASSET + 'beneficios_aeropuerto.jpg\')"></span><div class="bn-cu"><span class="bn-e">' + TX("bn_e1") + '</span>' +
-      '<h2>' + TX("bn_h1") + '</h2><p>' + TX("sv_trp") + '</p>' + pr + '<a class="bn-btn bn-neg" href="' + esc(waT) + '" target="_blank" rel="noopener">' + TX("sv_trb") + '</a></div></div>' +
-      '<div class="bn-c"><span class="bn-f" style="background-image:url(\'' + ASSET + 'beneficios_celular.jpg\')"></span><div class="bn-cu"><span class="bn-e">' + TX("bn_e2") + '</span>' +
-      '<h2>' + TX("bn_h2") + '</h2><p>' + TX("sv_esp") + '</p><span class="bn-cod">' + ESIM.codigo + ' <small>' + TX("sv_desc") + '</small><button type="button" id="bn-copiar">' + TX("bn_cop") + '</button></span>' +
-      '<a class="bn-btn bn-bor" href="' + ESIM.url + '" target="_blank" rel="noopener">' + TX("sv_esb") + '</a></div></div></div>' +
-      '<a class="bn-ir" href="' + WEB + '/">' + TX("bn_ir") + ' →</a></div>';
-    var b = document.getElementById("bn-copiar");
+    var pr = '<div class="ben-pr"><span>' + TX("sv_ida") + '<b>S/ 90</b></span><span>' + TX("sv_vue") + '<b>S/ 90</b></span><span>' + TX("sv_iv") + '<b>S/ 170</b></span></div>';
+    app.innerHTML = '<div class="ben"><a class="ben-logo" href="' + WEB + '/"><img src="' + ASSET + 'zienna_logo_h.png" alt="Zienna Living & Aparts"></a>' +
+      '<div class="ben-cab"><span class="ben-ok">✓ ' + TX("bn_ok") + '</span><h1>' + TX("bn_t") + '</h1><p>' + TX("bn_sub") + '</p></div><div class="ben-g">' +
+      '<div class="ben-c"><span class="ben-f" style="background-image:url(\'' + ASSET + 'beneficios_aeropuerto.jpg\')"></span><div class="ben-cu"><span class="ben-e">' + TX("bn_e1") + '</span>' +
+      '<h2>' + TX("bn_h1") + '</h2><p>' + TX("sv_trp") + '</p>' + pr + '<a class="ben-btn ben-neg" href="' + esc(waT) + '" target="_blank" rel="noopener">' + TX("sv_trb") + '</a></div></div>' +
+      '<div class="ben-c"><span class="ben-f" style="background-image:url(\'' + ASSET + 'beneficios_celular.jpg\')"></span><div class="ben-cu"><span class="ben-e">' + TX("bn_e2") + '</span>' +
+      '<h2>' + TX("bn_h2") + '</h2><p>' + TX("sv_esp") + '</p><span class="ben-cod">' + ESIM.codigo + ' <small>' + TX("sv_desc") + '</small><button type="button" id="ben-copiar">' + TX("bn_cop") + '</button></span>' +
+      '<a class="ben-btn ben-bor" href="' + ESIM.url + '" target="_blank" rel="noopener">' + TX("sv_esb") + '</a></div></div></div>' +
+      '<a class="ben-ir" href="' + WEB + '/">' + TX("bn_ir") + ' →</a></div>';
+    var b = document.getElementById("ben-copiar");
     b.addEventListener("click", function () {
       var ok = function () { b.textContent = TX("bn_copd"); setTimeout(function () { b.textContent = TX("bn_cop"); }, 1800); };
       if (navigator.clipboard) { navigator.clipboard.writeText(ESIM.codigo).then(ok, ok); } else { ok(); }
