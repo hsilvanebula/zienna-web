@@ -1927,3 +1927,5 @@ body.in-en { margin: 0; background: #fbf9f4; color: #141210; font-family: Manrop
 .in-cel .in-zonas { grid-template-columns: 1fr; gap: 18px; padding-bottom: 56px; }
 .in-cel .in-zn-img { aspect-ratio: 4 / 3.2; }
 @media (prefers-reduced-motion: reduce) { .in-f.on { animation: none; } .in-f { transition: none; } }
+.in-cel .in-velo { background: linear-gradient(180deg, rgba(0,0,0,.5) 0%, rgba(0,0,0,.08) 18%, rgba(0,0,0,.3) 34%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.7) 100%); }
+.in-cel .in-sub { text-shadow: 0 1px 10px rgba(0,0,0,.8); }
