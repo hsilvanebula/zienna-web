@@ -1413,7 +1413,7 @@
     var CEL = esCelular(6);
     var BASE = CEL ? 375 : 1181;
     var escalar = escaladoQueEntra(BASE);
-    document.body.className += " pt-en " + (CEL ? "pt-cel" : "pt-pc");
+    document.body.className += " pt-en pt-wix " + (CEL ? "pt-cel" : "pt-pc");
     // Letra del diseño 1 elegido por Hugo: Bodoni Moda (títulos y números) + Manrope (texto). Solo en la portada.
     var fl = document.createElement("link"); fl.rel = "stylesheet";
     fl.href = "https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@500;600&family=Manrope:wght@400;500;600;700&display=swap";
@@ -1924,7 +1924,7 @@
       '<div><b>' + TX("f_con") + '</b><a href="' + WEB + '/contacto">info@bookzienna.com</a><a href="' + WEB + '/contacto">' + TX("f_form") + '</a><span>' + TX("f_lima") + '</span></div>' +
       '<div><b>' + TX("f_red") + '</b><span class="zw-redes"><a class="zw-ig" href="https://www.instagram.com/bookzienna/" target="_blank" rel="noopener" aria-label="Instagram"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a><a class="zw-ig" href="https://www.facebook.com/p/Zienna-Living-Aparts-61594152062887/" target="_blank" rel="noopener" aria-label="Facebook"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8.5a.5.5 0 0 1 .5-.5z"/></svg></a><a class="zw-ig" href="https://www.tiktok.com/@bookzienna" target="_blank" rel="noopener" aria-label="TikTok"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.5 3 2.5 4.5 5 4.5"/></svg></a></span></div>' +
       '<div><b>' + TX("f_leg") + '</b><p><a href="' + WEB + '/politica-de-privacidad">' + TX("f_priv") + '</a> • <a href="' + WEB + '/terminos-y-condiciones">' + TX("f_cond") + '</a> • <a href="' + WEB + '/politica-de-cookies">' + TX("f_cook") + '</a></p>' +
-        '<a class="zw-lr" href="' + RAPIDA + '/libro-de-reclamaciones"><img src="' + ASSET + 'libro_reclamaciones_indecopi.webp" width="96" height="77" alt="Libro de Reclamaciones" loading="lazy"><span>' + TX("f_lr2") + '</span></a></div>' +
+        '<a class="zw-lr" href="' + RAPIDA + '/libro-de-reclamaciones"><img src="' + ASSET + 'libro_reclamaciones_indecopi.webp" width="72" height="58" alt="Libro de Reclamaciones" title="Libro de Reclamaciones" loading="lazy"></a></div>' +
       '</div><i class="zw-pie-l"></i><small>© ' + new Date().getFullYear() + ' ZIENNA LIVING & APARTS. ' + TX("f_der") + '</small></footer>';
     return { cab: cab, pie: pie };
   }

@@ -1957,8 +1957,8 @@ body.in-en { margin: 0; background: #fff; }
 .pt-cel .pt-mb .pt-m span { font-size: 13.5px; }
 .pt-cel .pt-mb .pt-m i { font-size: 12px; }
 /* Aviso oficial de Indecopi (Libro de Reclamaciones) en el pie y en la página del libro */
-.zw-lr { background: #fff; color: #111 !important; border: 0; border-radius: 12px; padding: 8px 14px 8px 8px; gap: 12px; }
-.zw-lr img { width: 96px; height: auto; display: block; flex: none; }
+.zw-lr { background: #fff; color: #111 !important; border: 0; border-radius: 10px; padding: 5px; gap: 0; }  /* Hugo 19-11: solo la imagen, más chica */
+.zw-lr img { width: 72px; height: auto; display: block; flex: none; }
 .zw-lr span { font-size: 12.5px; line-height: 1.35; max-width: 170px; color: #111; }
 .lr-tit .lr-ind { width: 120px; height: auto; flex: none; }
 .lr-cel .lr-tit .lr-ind { width: 84px; }
@@ -2136,3 +2136,10 @@ body.bq-en:not(.bq-en-cel) .bq:not(.bq-up) .bq-bar { height: 7.2vw; min-height: 
 .fc-card b { font-weight: 600; font-size: 16.5px; line-height: 1.35; }
 .fc-card span:last-child { font-size: 14.5px; color: #6b665e; }
 .la-cel .la-h h1 { font-size: 30px; } .la-cel .la-g { gap: 34px; }
+/* Dentro del recuadro de Wix en celular el alto es fijo: fichas A con foto chica a la izquierda para que no se corte lo de abajo. */
+.pt-wix.pt-cel .pt-alo .pt-cards { gap: 18px; }
+.pt-wix.pt-cel .pt-alo .pt-card { display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 14px; row-gap: 0; align-content: start; }
+.pt-wix.pt-cel .pt-alo .pt-img { grid-row: 1 / 4; aspect-ratio: auto; height: 96px; margin: 0; border-radius: 12px; }
+.pt-wix.pt-cel .pt-alo .pt-c1, .pt-wix.pt-cel .pt-alo .pt-c1 b { font-size: 15px; gap: 8px; }
+.pt-wix.pt-cel .pt-alo .pt-c2 { font-size: 13.5px; margin-top: 2px; }
+.pt-wix.pt-cel .pt-alo .pt-c3 { font-size: 14px; margin-top: 4px; }
