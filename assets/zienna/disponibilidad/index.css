@@ -2032,11 +2032,13 @@ body.in-en { margin: 0; background: #fff; }
 }
 
 /* ---------- Caja de búsqueda con panel desplegable, tipo Airbnb (Hugo, 19-11-2026) ---------- */
-html:has(body.cb-en), body.cb-en { background: transparent !important; margin: 0; }
+html:has(body.cb-en), body.cb-en { background: transparent !important; margin: 0; height: 100%; overflow: hidden; }
+body.cb-en #dz-app, body.cb-en #cb-raiz { height: 100%; }
 body.cb-en #dz-app { max-width: none; padding: 0; margin: 0; }
 body.cb-en #cb-raiz { position: relative; padding: 0 2px; }
 .cb { position: relative; font-family: Jost, Manrope, sans-serif; color: #141210; }
-body.cb-en .cb-up { position: fixed; left: 2px; right: 2px; bottom: 2px; }
+body.cb-en .cb-up { position: absolute; left: 2px; right: 2px; bottom: 16px; }
+body.cb-en .cb:not(.cb-up) { margin-top: 2px; }
 .cb-bar { display: grid; grid-template-columns: minmax(0,1.25fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr) 118px; height: 73px; background: #fff; border: 1px solid #dcd9cb; box-shadow: 0 14px 22px -12px rgba(0,0,0,.22); }
 .cb-bar.cb-cel { grid-template-columns: minmax(0,1fr) minmax(0,1fr); height: 117px; }
 .cb-c { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; text-align: left; border: 0; border-right: 1px solid #dcd9cb; background: #fff; padding: 0 14px; cursor: pointer; font: inherit; color: inherit; min-width: 0; }
