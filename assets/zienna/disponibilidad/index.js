@@ -1337,18 +1337,41 @@
         '<div class="gl"><a class="gl-atras" href="' + esc(volver) + '">‹ Volver al alojamiento</a><h1>' + esc(f.titulo) + '</h1><p class="gl-sub">Todas las fotos · ' + esc(f.subtitulo) + ' · ' + fotos.length + ' fotos</p><div class="gl-grid">' :
         '<header class="gl-cab"><a class="gl-volver" href="' + esc(volver) + '">‹ Volver</a><span class="gl-cab-t">' + esc(f.titulo) + '</span></header>' +
         '<div class="gl"><h1>Todas las fotos</h1><p class="gl-sub">' + esc(f.subtitulo) + ' · ' + fotos.length + ' fotos</p><div class="gl-grid">';
-      fotos.forEach(function (x, k) {
-        var grande = k % 3 === 0;
-        h += '<button type="button" class="gl-f' + (grande ? ' gl-f1' : '') + '" id="f' + (k + 1) + '" data-k="' + k + '" aria-label="Ver foto ' + (k + 1) + ' en grande">' +
-          '<img src="' + esc(grande ? (x.s || x.m) : x.m) + '" alt="Foto ' + (k + 1) + ' de ' + fotos.length + '"' + (k > 2 ? ' loading="lazy"' : '') + '></button>';
-      });
+      // Recorrido por ambiente (Hugo, 19-11-2026): si las fotos traen su ambiente, se agrupan; si no, la lista de siempre.
+      var orden = fotos.map(function (x, k) { return k; }), grupos = [];
+      if ((f.ambientes || []).length && fotos.some(function (x) { return x.a; })) {
+        f.ambientes.forEach(function (am) {
+          var ks = []; fotos.forEach(function (x, k) { if (x.a === am[0]) { ks.push(k); } });
+          if (ks.length) { grupos.push({ c: am[0], n: am[1], ks: ks }); }
+        });
+        orden = []; grupos.forEach(function (g) { orden = orden.concat(g.ks); });
+        fotos.forEach(function (x, k) { if (orden.indexOf(k) < 0) { orden.push(k); } });
+      }
+      function fotoBtn(k, grande, lazy) {
+        var x = fotos[k];
+        return '<button type="button" class="gl-f' + (grande ? ' gl-f1' : '') + '" id="f' + (k + 1) + '" data-k="' + k + '" aria-label="Ver foto ' + (k + 1) + ' en grande">' +
+          '<img src="' + esc(grande ? (x.s || x.m) : x.m) + '" alt="' + esc(x.a ? (grupos.filter(function (g) { return g.c === x.a; })[0] || {}).n || "Foto" : "Foto " + (k + 1)) + '"' + (lazy ? ' loading="lazy"' : '') + '></button>';
+      }
+      if (grupos.length) {
+        h = h.replace(/<h1>Todas las fotos<\/h1>/, '<h1>Recorrido de fotos</h1>').replace('<p class="gl-sub">Todas las fotos · ', '<p class="gl-sub">Recorrido de fotos · ').replace(/<div class="gl-grid">$/, '');
+        h += '<nav class="gl-amb">' + grupos.map(function (g) { return '<a href="#am-' + g.c + '"><span style="background-image:url(\'' + esc(fotos[g.ks[0]].m) + '\')"></span><b>' + esc(g.n) + '</b><small>' + g.ks.length + (g.ks.length === 1 ? ' foto' : ' fotos') + '</small></a>'; }).join("") + '</nav>';
+        var nf = 0;
+        grupos.forEach(function (g) {
+          h += '<section class="gl-sec" id="am-' + g.c + '"><div class="gl-sec-t"><h2>' + esc(g.n) + '</h2><small>' + g.ks.length + (g.ks.length === 1 ? ' foto' : ' fotos') + '</small></div><div class="gl-grid">';
+          g.ks.forEach(function (k, j) { h += fotoBtn(k, j % 3 === 0, nf++ > 2); });
+          h += '</div></section>';
+        });
+        h += '<div>';
+      } else {
+        fotos.forEach(function (x, k) { h += fotoBtn(k, k % 3 === 0, k > 2); });
+      }
       h += '</div><p class="gl-fin"><a href="' + esc(volver) + '">‹ Volver al alojamiento</a></p></div>' +
         '<div class="gl-v" id="gl-v" hidden><img id="gl-vi" alt="Foto en grande"><button type="button" class="gl-vx" aria-label="Cerrar">×</button>' +
         '<button type="button" class="gl-va" aria-label="Foto anterior">‹</button><button type="button" class="gl-vs" aria-label="Foto siguiente">›</button><span class="gl-vn" id="gl-vn"></span></div>';
       app.innerHTML = h;
       var i0 = 0, v = $("gl-v");
-      function ver(i) { i0 = (i + fotos.length) % fotos.length; $("gl-vi").src = fotos[i0].g; $("gl-vn").textContent = (i0 + 1) + " / " + fotos.length; }
-      function abrir(i) { v.hidden = false; document.body.style.overflow = "hidden"; ver(i); }
+      function ver(i) { i0 = (i + orden.length) % orden.length; var x = fotos[orden[i0]]; $("gl-vi").src = x.g; $("gl-vn").textContent = (i0 + 1) + " / " + orden.length + (x.a && grupos.length ? " · " + ((grupos.filter(function (g) { return g.c === x.a; })[0] || {}).n || "") : ""); }
+      function abrir(k) { v.hidden = false; document.body.style.overflow = "hidden"; ver(orden.indexOf(k)); }
       function cerrar() { v.hidden = true; document.body.style.overflow = ""; }
       app.addEventListener("click", function (ev) {
         var b = ev.target.closest(".gl-f"); if (b) { abrir(+b.getAttribute("data-k")); return; }

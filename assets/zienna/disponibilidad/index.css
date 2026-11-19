@@ -2011,3 +2011,22 @@ body.in-en { margin: 0; background: #fff; }
 .sl-chips button { border: 1px solid #ddd; border-radius: 999px; padding: 8px 13px; font: 500 13.5px Manrope, sans-serif; background: #fff; color: #111; cursor: pointer; }
 .sl-chips button.on { background: #111; color: #fff; border-color: #111; }
 #sl-srv .sl-tar-tot { margin-top: 4px; }
+.fi-cel .fi-sv { padding: 0 16px; margin-top: 40px; }
+
+/* ---------- Recorrido de fotos por ambiente (Hugo, 19-11-2026) ---------- */
+.gl-amb { display: flex; flex-wrap: wrap; gap: 14px; padding-bottom: 24px; border-bottom: 1px solid #eee; }
+.gl-amb a { width: 140px; color: #111 !important; text-decoration: none; }
+.gl-amb span { display: block; aspect-ratio: 4 / 3; border-radius: 12px; background: #ece9e0 center / cover; }
+.gl-amb b { display: block; margin-top: 7px; font-size: 15px; font-weight: 600; }
+.gl-amb small { color: #777; font-size: 13px; }
+.gl-sec { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 28px; padding: 30px 0; border-bottom: 1px solid #f0ece3; scroll-margin-top: 70px; }
+.gl-sec-t { position: sticky; top: 80px; align-self: start; }
+.gl-sec h2 { margin: 0; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; font-size: 30px; }
+.gl-sec small { color: #777; font-size: 14px; }
+@media (max-width: 760px) {
+  .gl-amb { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .gl-amb a { width: auto; }
+  .gl-sec { grid-template-columns: minmax(0, 1fr); gap: 12px; padding: 24px 0; }
+  .gl-sec-t { position: static; }
+  .gl-sec .gl-grid { grid-template-columns: minmax(0, 1fr); }
+}
