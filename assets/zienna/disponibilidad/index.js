@@ -504,6 +504,11 @@
       var a = d.alojamientos.filter(function (x) { return x.propiedad === PROP; })[0];
       if (a) { document.getElementById("fe-volver").href = urlFicha(a); document.getElementById("fe-nom").textContent = a.titulo_web || a.titulo || a.nombre; }
     });
+    // Al volver, la ficha (en web.bookzienna.com) recibe las fechas recién elegidas en la dirección.
+    document.getElementById("fe-volver").addEventListener("click", function () {
+      var a = alojamientos.filter(function (x) { return x.propiedad === PROP; })[0];
+      this.href = a ? urlFicha(a) : conFechasURL(FIJAS + "/" + (FICHAS_RAPIDAS["/" + String(PROP).toLowerCase()] ? String(PROP).toLowerCase() + "/" : "alojamientos/"));
+    });
   }
 
   // ───────── tarjeta de la ficha nueva (web, 16-11-2026) ─────────
