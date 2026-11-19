@@ -28,6 +28,7 @@
   RUTAS["/favoritos"] = "favoritos";
   RUTAS["/libro-de-reclamaciones"] = "reclamos";
   RUTAS["/inicio"] = "inicio";
+  RUTAS["/caja"] = "caja";
   var MODO = Q.get("modo") || RUTAS[RUTA] || "resultados";
   var PROP = Q.get("p") || FICHAS_RAPIDAS[RUTA] || "";
   var APP = app;
@@ -189,6 +190,101 @@
   }
 
   // ───────── modo barra (inicio) ─────────
+  // ───────── Caja de búsqueda con todo dentro, tipo Airbnb (Hugo, 19-11-2026: «que no abra una pantalla gigante, algo
+  // sutil, dentro de la cajita»). Distrito, fechas y huéspedes se eligen en un panel que se despliega desde la caja; recién
+  // «Buscar» lleva a Alojamientos con todo elegido. Se usa en la portada de Wix (recuadro modo=caja, con la imagen de la
+  // caja de siempre debajo mientras carga) y en la portada propia. `arriba`: el panel se abre hacia arriba (celular en Wix,
+  // donde abajo se corta la sección). `T`: textos (portada propia en 10 idiomas).
+  var DOW_C = ["L", "M", "M", "J", "V", "S", "D"];
+  function cajaBusqueda(caja, op) {
+    op = op || {};
+    var CEL = op.cel, T = op.T || {}, abierto = "", off = 0, z = busq.z || "";
+    var L = { dis: T.dis || "Distrito", todos: T.todos || "Todos los distritos", ll: T.ll || "Llegada", sa: T.sa || "Salida", fe: "Fechas", hu: T.hu || "Huéspedes",
+      elige: T.elige || "Elige tu fecha", eliges: "Elige tus fechas", buscar: T.buscar || "Buscar", hs: T.hs || ["huésped", "huéspedes"] };
+    function hTxt() { var h = +busq.h || 2; return h + " " + L.hs[h === 1 ? 0 : 1]; }
+    function fechasTxt() { return busq.ll && busq.sa ? corto(busq.ll) + " → " + corto(busq.sa) : busq.ll ? corto(busq.ll) + " → …" : L.eliges; }
+    function barra() {
+      var flecha = '<i class="cb-fl"></i>';
+      return '<div class="cb-bar' + (CEL ? ' cb-cel' : '') + '">' +
+        '<button type="button" class="cb-c' + (abierto === "dis" ? ' on' : '') + '" data-p="dis"><small>' + L.dis + '</small><b>' + esc(z || (CEL ? "Todos" : L.todos)) + '</b>' + flecha + '</button>' +
+        (CEL ? '<button type="button" class="cb-c' + (abierto === "fe" ? ' on' : '') + '" data-p="fe"><small>' + L.fe + '</small><b>' + fechasTxt() + '</b></button>' :
+          '<button type="button" class="cb-c' + (abierto === "fe" && !(busq.ll && !busq.sa) ? ' on' : '') + '" data-p="fe"><small>' + L.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : L.elige) + '</b></button>' +
+          '<button type="button" class="cb-c' + (abierto === "fe" && busq.ll && !busq.sa ? ' on' : '') + '" data-p="fe"><small>' + L.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : L.elige) + '</b></button>') +
+        '<button type="button" class="cb-c' + (abierto === "hu" ? ' on' : '') + '" data-p="hu"><small>' + L.hu + '</small><b>' + hTxt() + '</b>' + flecha + '</button>' +
+        '<button type="button" class="cb-go" data-p="go">' + L.buscar + '</button></div>';
+    }
+    function mes(ym) {
+      var p = ym.split("-"), d1 = new Date(+p[0], +p[1] - 1, 1), dias = new Date(+p[0], +p[1], 0).getDate(), vac = (d1.getDay() + 6) % 7, hoyF = hoy(), h = '';
+      h += '<div class="cb-mes"><b>' + mesTxt(ym) + '</b><div class="cb-dow">' + DOW_C.map(function (d) { return '<span>' + d + '</span>'; }).join("") + '</div><div class="cb-g">';
+      for (var i = 0; i < vac; i++) { h += '<span></span>'; }
+      for (var d = 1; d <= dias; d++) {
+        var f = ym + "-" + pad(d), c = "cb-d";
+        if (f < hoyF) { c += " pas"; }
+        if (f === busq.ll || f === busq.sa) { c += " sel"; }
+        if (busq.ll && busq.sa && f > busq.ll && f < busq.sa) { c += " rango"; }
+        if (f === busq.ll && busq.sa) { c += " ini"; } if (f === busq.sa) { c += " fin"; }
+        h += '<button type="button" class="' + c + '" data-f="' + f + '"' + (f < hoyF ? ' disabled' : '') + '>' + d + '</button>';
+      }
+      return h + '</div></div>';
+    }
+    function panel() {
+      if (!abierto) { return ""; }
+      var h = '<div class="cb-pop cb-pop-' + abierto + (op.arriba ? ' cb-arriba' : '') + '">';
+      if (abierto === "dis") {
+        h += [""].concat(DISTRITOS).map(function (d) { return '<button type="button" class="cb-op' + (d === z ? ' on' : '') + '" data-z="' + d + '">' + esc(d || L.todos) + '</button>'; }).join("");
+      } else if (abierto === "fe") {
+        var ym = sumaMes(hoy().slice(0, 7), off), n = busq.ll && busq.sa ? Math.round((new Date(busq.sa + "T12:00:00") - new Date(busq.ll + "T12:00:00")) / 864e5) : 0;
+        h += '<div class="cb-cab"><button type="button" class="cb-nav" data-n="-1"' + (off <= 0 ? ' disabled' : '') + ' aria-label="Mes anterior">‹</button><span>' +
+          (n ? n + (n === 1 ? " noche" : " noches") + " · " + corto(busq.ll) + " → " + corto(busq.sa) : busq.ll ? "Ahora elige tu salida" : "Elige tu llegada") +
+          '</span><button type="button" class="cb-nav" data-n="1"' + (off >= 10 ? ' disabled' : '') + ' aria-label="Mes siguiente">›</button></div>';
+        h += '<div class="cb-meses">' + mes(ym) + (CEL ? '' : mes(sumaMes(ym, 1))) + '</div>';
+        h += '<div class="cb-pie"><button type="button" class="cb-borrar" data-x="1">Borrar</button><button type="button" class="cb-listo" data-p="">' + (n ? "Listo" : "Cerrar") + '</button></div>';
+      } else if (abierto === "hu") {
+        var hh = +busq.h || 2;
+        h += '<div class="cb-hu"><span>' + L.hu + '</span><div><button type="button" class="cb-mm" data-h="-1"' + (hh <= 1 ? ' disabled' : '') + '>−</button><b>' + hh + '</b><button type="button" class="cb-mm" data-h="1"' + (hh >= 4 ? ' disabled' : '') + '>+</button></div></div>' +
+          '<div class="cb-pie"><span></span><button type="button" class="cb-listo" data-p="">Listo</button></div>';
+      }
+      return h + '</div>';
+    }
+    function pintar() { caja.innerHTML = '<div class="cb' + (op.arriba ? ' cb-up' : '') + '">' + (op.arriba ? panel() + barra() : barra() + panel()) + '</div>'; if (op.alPintar) { op.alPintar(!!abierto); } }
+    function ir() {
+      busq.z = z; guardar();
+      var q = []; if (z) { q.push("zona=" + encodeURIComponent(z)); }
+      if (busq.ll && busq.sa) { q.push("ll=" + busq.ll, "sa=" + busq.sa, "h=" + (busq.h || 2)); }
+      var u = LISTADO + (q.length ? "?" + q.join("&") : "");
+      try { (window.top || window).location.href = u; } catch (e) { location.href = u; }
+    }
+    caja.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      var t = ev.target.closest("button"); if (!t) { return; }
+      if (t.hasAttribute("data-p")) {
+        var p = t.getAttribute("data-p");
+        if (p === "go") { if (!(busq.ll && busq.sa)) { abierto = "fe"; pintar(); return; } ir(); return; }
+        abierto = abierto === p ? "" : p; pintar(); return;
+      }
+      if (t.hasAttribute("data-z")) { z = zonaValida(t.getAttribute("data-z")); abierto = ""; pintar(); return; }
+      if (t.hasAttribute("data-n")) { off = Math.max(0, Math.min(10, off + +t.getAttribute("data-n"))); pintar(); return; }
+      if (t.hasAttribute("data-x")) { busq.ll = ""; busq.sa = ""; guardar(); pintar(); return; }
+      if (t.hasAttribute("data-h")) { busq.h = Math.max(1, Math.min(4, (+busq.h || 2) + +t.getAttribute("data-h"))); guardar(); pintar(); return; }
+      if (t.hasAttribute("data-f")) {
+        var f = t.getAttribute("data-f");
+        if (!busq.ll || busq.sa || f <= busq.ll) { busq.ll = f; busq.sa = ""; } else { busq.sa = f; guardar(); }
+        pintar(); return;
+      }
+    });
+    document.addEventListener("click", function () { if (abierto) { abierto = ""; pintar(); } });
+    pintar();
+    return { cerrar: function () { abierto = ""; pintar(); } };
+  }
+  // Recuadro de Wix (portada): solo la caja, fondo transparente. ?cel=1 versión celular · ?abre=arriba panel hacia arriba.
+  function modoCaja() {
+    document.documentElement.style.background = "transparent";
+    document.body.className += " cb-en" + (Q.get("cel") === "1" ? " cb-en-cel" : "");
+    var fj = document.createElement("link"); fj.rel = "stylesheet"; fj.href = "https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap"; document.head.appendChild(fj);
+    app.innerHTML = '<div id="cb-raiz"></div>';
+    cajaBusqueda(document.getElementById("cb-raiz"), { cel: Q.get("cel") === "1", arriba: Q.get("abre") === "arriba" });
+  }
+
   function modoBarra() {
     // Celular (Hugo, 17-11-2026): nada de calendario del teléfono. Tocar Llegada, Salida o «Buscar» abre la
     // página propia de fechas (modo=buscar) a pantalla completa, con nuestro calendario y los alojamientos libres.
@@ -2345,12 +2441,13 @@
       APP.innerHTML = mw.cab +
         '<section class="in-hero"><div class="in-fotos">' + PORTADA_FOTOS.map(function (f, k) { return '<div class="in-f' + (k === actual ? ' on' : '') + '" data-k="' + k + '"' + (k < 2 ? ' style="background-image:url(\'' + foto(f) + '\')"' : '') + '></div>'; }).join("") + '</div>' +
         '<div class="in-velo"></div><div class="in-txt"><h1>' + esc(T.t1) + '</h1><p>' + esc(T.t2) + '</p></div>' +
-        '<form class="in-barra" id="in-barra"><label class="in-c in-zona"><small>' + T.dis + '</small><select id="in-z"><option value="">' + T.todos + '</option>' + DISTRITOS.map(function (z) { return '<option' + (z === busq.z ? " selected" : "") + '>' + z + '</option>'; }).join("") + '</select></label>' +
+        '<div class="in-caja" id="in-caja"></div><form class="in-barra" id="in-barra" hidden><label class="in-c in-zona"><small>' + T.dis + '</small><select id="in-z"><option value="">' + T.todos + '</option>' + DISTRITOS.map(function (z) { return '<option' + (z === busq.z ? " selected" : "") + '>' + z + '</option>'; }).join("") + '</select></label>' +
         '<a class="in-c in-ir" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.ll + '</small><b>' + (busq.ll ? corto(busq.ll) : T.elige) + '</b></a>' +
         '<a class="in-c in-ir" href="' + esc(urlBuscar("fechas")) + '"><small>' + T.sa + '</small><b>' + (busq.sa ? corto(busq.sa) : T.elige) + '</b></a>' +
         '<label class="in-c in-hu"><small>' + T.hu + '</small><select id="in-h">' + opH + '</select></label><button type="submit" class="in-buscar">' + T.buscar + '</button></form>' +
         '<span class="in-puntos" id="in-puntos">' + PORTADA_FOTOS.map(function (f, k) { return '<button type="button" data-k="' + k + '"' + (k === actual ? ' class="on"' : '') + ' aria-label="' + (k + 1) + '"><i></i></button>'; }).join("") + '</span></section>' +
         '<div class="in-debajo" id="in-debajo"><div class="pt">' + debajo + '</div></div>' + mw.pie;
+      cajaBusqueda($("in-caja"), { cel: CEL, T: T });
       function rehacerLinks() { [].forEach.call(document.querySelectorAll(".in-ir"), function (a) { a.href = urlBuscar("fechas"); }); }
       $("in-z").addEventListener("change", function () { busq.z = zonaValida(this.value); rehacerLinks(); });
       $("in-h").addEventListener("change", function () { busq.h = +this.value; guardar(); rehacerLinks(); });
@@ -2787,6 +2884,7 @@
   else if (MODO === "whatsapp") { modoWhatsapp(); }
   else if (MODO === "portada") { modoPortada(); }
   else if (MODO === "barra") { modoBarra(); }
+  else if (MODO === "caja") { modoCaja(); }
   else if (MODO === "buscar") { modoBuscar(); }
   else if (MODO === "limpieza") { modoLimpieza(); }
   else if (MODO === "agenda") { modoAgenda(); }
