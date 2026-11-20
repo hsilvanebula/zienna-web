@@ -133,21 +133,27 @@
     }
     return null;
   }
+  // Por partes, de lo más fuerte a lo más débil: «Fayetteville, Carolina del Norte · julio de 2026», «San Isidro · Vista
+  // al mar», «2 huéspedes (máximo 2)», «71 US$ × 2 noches». Cada parte se busca entera y, si no está, se vuelve a partir.
+  var SEPS = [/(\s*[·•|]\s*)/, /(\s*[—–→×]\s*)/, /(\s*\(\s*|\s*\)\s*)/, /(,\s+)/, /(:\s+)/];
+  function trPartes(k, nivel) {
+    var r = trUno(k); if (r != null) { return r; }
+    for (var n = nivel; n < SEPS.length; n++) {
+      var tr = k.split(SEPS[n]); if (tr.length < 2) { continue; }
+      var cambio = false;
+      var out = tr.map(function (x, m) {
+        if (m % 2 || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(x)) { return x; }
+        var y = trPartes(x.trim(), n + 1); if (y != null) { cambio = true; return x.replace(x.trim(), y); } return x;
+      });
+      return cambio ? out.join("") : null;
+    }
+    return null;
+  }
   function trTexto(t) {
     if (!ZTR) { return null; }
     var k = t.replace(/\s+/g, " ").trim();
     if (!k || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(k)) { return null; }
-    var r = trUno(k); if (r != null) { return r; }
-    // Por partes: «San Isidro · Vista al mar», «2 huéspedes (máximo 2)», «71 US$ × 2 noches»…
-    var trozos = k.split(/(\s*[·•—–→×|]\s*|\s*\(\s*|\s*\)\s*|,\s+|:\s+)/), cambio = false;
-    if (trozos.length > 1) {
-      var out = trozos.map(function (x, n) {
-        if (n % 2 || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(x)) { return x; }
-        var y = trUno(x.trim()); if (y != null) { cambio = true; return y; } return x;
-      });
-      if (cambio) { return out.join(""); }
-    }
-    return null;
+    return trPartes(k, 0);
   }
   function trNodo(raiz) {
     if (!ZTR || !raiz) { return; }
