@@ -2191,3 +2191,6 @@ body.hl-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !im
 .hl-con { border: 1px solid #141210; border-radius: 999px; padding: 7px 16px; color: #141210 !important; text-decoration: none !important; font-size: 15px; white-space: nowrap; background: #fff; }
 .hl-con:hover, .hl-pas:hover { background: #141210; color: #fff !important; }
 .hl-cel .hl-pas, .hl-cel .hl-con { padding: 5px 10px; font-size: 13px; gap: 5px; }
+
+/* La barra vieja de /inicio queda oculta: su display:grid le ganaba al atributo hidden (Hugo vio dos cajas, 20-11-2026). */
+.in-barra[hidden] { display: none !important; }
