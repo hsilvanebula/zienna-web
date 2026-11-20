@@ -2256,7 +2256,8 @@
   function modoIdioma() {
     var cel = Q.get("cel") === "1" || window.innerWidth < 230;
     document.documentElement.style.background = "transparent";
-    document.body.className += " hl-en" + (cel ? " hl-cel" : "");
+    // En el teléfono va dentro del menú ☰: alineada a la izquierda como los demás enlaces.
+    document.body.className += " hl-en" + (cel ? " hl-cel" : "") + ((window.screen && screen.width < 760) ? " hl-tel" : "");
     var fj = document.createElement("link"); fj.rel = "stylesheet"; fj.href = "https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap"; document.head.appendChild(fj);
     var ops = IDIOMAS.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === "es" ? " selected" : "") + '>' + x[1] + '</option>'; }).join("");
     app.innerHTML = '<div class="hl"><label class="hl-pas">' + GLOBO + '<span>' + (cel ? "ES" : "Español") + '</span><i>▾</i><select id="hl-sel" aria-label="Idioma / Language">' + ops + '</select></label>' +

@@ -2194,3 +2194,4 @@ body.hl-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !im
 
 /* La barra vieja de /inicio queda oculta: su display:grid le ganaba al atributo hidden (Hugo vio dos cajas, 20-11-2026). */
 .in-barra[hidden] { display: none !important; }
+.hl-tel .hl { justify-content: flex-start; padding-left: 0; }
