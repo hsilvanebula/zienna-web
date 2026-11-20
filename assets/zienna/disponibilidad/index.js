@@ -30,6 +30,7 @@
   RUTAS["/inicio"] = "inicio";
   RUTAS["/caja"] = "caja";
   RUTAS["/beneficios"] = "beneficios";
+  RUTAS["/idioma"] = "idioma";
   var MODO = Q.get("modo") || RUTAS[RUTA] || "resultados";
   var PROP = Q.get("p") || FICHAS_RAPIDAS[RUTA] || "";
   var APP = app;
@@ -2249,6 +2250,23 @@
       if (navigator.clipboard) { navigator.clipboard.writeText(ESIM.codigo).then(ok, ok); } else { ok(); }
     });
   }
+  // Pastilla de idiomas + Contacto para la cabecera de Wix (Hugo, 19-11-2026: «no veo nada del contacto ni de los idiomas»).
+  // Va en un «Elemento HTML» chico; la lista es un <select> nativo para que se abra fuera del recuadro. Español se queda
+  // en Wix; otro idioma lleva a la misma portada traducida (web.bookzienna.com/inicio/?lang=xx). ?cel=1 = solo el código.
+  function modoIdioma() {
+    var cel = Q.get("cel") === "1" || window.innerWidth < 230;
+    document.documentElement.style.background = "transparent";
+    document.body.className += " hl-en" + (cel ? " hl-cel" : "");
+    var fj = document.createElement("link"); fj.rel = "stylesheet"; fj.href = "https://fonts.googleapis.com/css2?family=Jost:wght@400;500&display=swap"; document.head.appendChild(fj);
+    var ops = IDIOMAS.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === "es" ? " selected" : "") + '>' + x[1] + '</option>'; }).join("");
+    app.innerHTML = '<div class="hl"><label class="hl-pas">' + GLOBO + '<span>' + (cel ? "ES" : "Español") + '</span><i>▾</i><select id="hl-sel" aria-label="Idioma / Language">' + ops + '</select></label>' +
+      '<a class="hl-con" target="_top" href="' + RAPIDA + '/disponibilidad?modo=contacto">Contacto</a></div>';
+    document.getElementById("hl-sel").addEventListener("change", function () {
+      var l = this.value;
+      try { localStorage.setItem("zlang", l); } catch (e) {}
+      if (l !== "es") { window.top.location.href = FIJAS + "/inicio/?lang=" + l; }
+    });
+  }
   var DISTRITOS = ["San Miguel", "San Isidro", "Lince"];
   function zonaValida(z) { return DISTRITOS.indexOf(z || "") >= 0 ? z : ""; }
   var COMODIDADES = {
@@ -2919,6 +2937,7 @@
   else if (MODO === "barra") { modoBarra(); }
   else if (MODO === "caja") { modoCaja(); }
   else if (MODO === "beneficios") { modoBeneficios(); }
+  else if (MODO === "idioma") { modoIdioma(); }
   else if (MODO === "buscar") { modoBuscar(); }
   else if (MODO === "limpieza") { modoLimpieza(); }
   else if (MODO === "agenda") { modoAgenda(); }

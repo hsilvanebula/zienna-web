@@ -2180,3 +2180,14 @@ body.ben-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !i
   .ben-cu { padding: 18px; }
   .ben-c h2 { font-size: 24px; }
 }
+
+/* ---------- Pastilla de idiomas + Contacto en la cabecera de Wix (19-11-2026) ---------- */
+html:has(body.hl-en), body.hl-en { background: transparent !important; margin: 0; overflow: hidden; }
+body.hl-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !important; }
+.hl { display: flex; align-items: center; justify-content: flex-end; gap: 8px; height: 100vh; padding: 0 2px; font-family: Jost, Manrope, sans-serif; }
+.hl-pas { position: relative; display: inline-flex; align-items: center; gap: 7px; border: 1px solid #141210; background: #fff; color: #141210; border-radius: 999px; padding: 7px 14px; font-size: 15px; font-weight: 400; white-space: nowrap; cursor: pointer; }
+.hl-pas i { font-style: normal; font-size: 10px; }
+.hl-pas select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 16px; }
+.hl-con { border: 1px solid #141210; border-radius: 999px; padding: 7px 16px; color: #141210 !important; text-decoration: none !important; font-size: 15px; white-space: nowrap; background: #fff; }
+.hl-con:hover, .hl-pas:hover { background: #141210; color: #fff !important; }
+.hl-cel .hl-pas, .hl-cel .hl-con { padding: 5px 10px; font-size: 13px; gap: 5px; }
