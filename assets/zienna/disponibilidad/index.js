@@ -49,6 +49,11 @@
     if (LANGS.indexOf(l) >= 0) { LANG = l; try { localStorage.setItem("zlang", l); } catch (e) {} }
   })();
   function LOC() { return LOCALES[LANG] || "es-PE"; }
+  function DIAS() {
+    if (LANG === "es") { return ["L", "M", "M", "J", "V", "S", "D"]; }
+    try { var f = new Intl.DateTimeFormat(LOC(), { weekday: LANG === "zh" || LANG === "ja" || LANG === "ko" ? "narrow" : "short" }); return [5, 6, 7, 8, 9, 10, 11].map(function (d) { return f.format(new Date(2024, 1, d)); }); }
+    catch (e) { return ["L", "M", "M", "J", "V", "S", "D"]; }
+  }
   var MONEDAS = [["PEN", "S/"], ["USD", "US$"], ["EUR", "€"], ["BRL", "R$"], ["CLP", "CLP$"], ["ARS", "AR$"], ["MXN", "MX$"], ["COP", "COL$"],
     ["GBP", "£"], ["CAD", "CA$"], ["AUD", "AU$"], ["CHF", "CHF"], ["CNY", "¥"], ["JPY", "¥"], ["KRW", "₩"], ["RUB", "₽"]];
   function monValida(m) { return MONEDAS.some(function (x) { return x[0] === m; }) ? m : ""; }
@@ -70,6 +75,59 @@
       if (!habia && MON !== "PEN") { try { if (!sessionStorage.getItem("zrepinta")) { sessionStorage.setItem("zrepinta", "1"); location.reload(); } } catch (e) {} }
     }).catch(function () {});
   })();
+  // Traducción de TODA la página (Hugo, 20-11-2026). Diccionario español → idioma en tr/<idioma>.js (window.ZTR,
+  // generado con scratchpad i18n/). Se aplica a los textos y a placeholder/aria-label/title/alt, y otra vez cada vez que
+  // algo se repinta (MutationObserver). Si un texto lleva números se busca con {n}. data-notr / translate="no" = no tocar.
+  var ZTR = null, ZTR_ESPERA = [];
+  function trTexto(t) {
+    if (!ZTR) { return null; }
+    var k = t.replace(/\s+/g, " ").trim();
+    if (!k || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(k)) { return null; }
+    if (ZTR[k] != null) { return ZTR[k]; }
+    var nums = [], pl = k.replace(/\d+(?:[.,]\d+)*/g, function (m) { nums.push(m); return "{n}"; });
+    if (nums.length && ZTR[pl] != null) { var i = 0; return ZTR[pl].replace(/\{n\}/g, function () { return nums[i++] || ""; }); }
+    return null;
+  }
+  function trNodo(raiz) {
+    if (!ZTR || !raiz) { return; }
+    var w = document.createTreeWalker(raiz, NodeFilter.SHOW_TEXT, { acceptNode: function (n) {
+      var p = n.parentNode; if (!p || p.closest && p.closest("[data-notr],[translate=no],script,style")) { return NodeFilter.FILTER_REJECT; }
+      return NodeFilter.FILTER_ACCEPT; } }), n, lst = [];
+    while ((n = w.nextNode())) { lst.push(n); }
+    lst.forEach(function (n) {
+      var t = trTexto(n.nodeValue);
+      if (t != null) { var m = n.nodeValue.match(/^(\s*)[\s\S]*?(\s*)$/); n.nodeValue = m[1] + t + m[2]; }
+    });
+    var els = raiz.querySelectorAll ? raiz.querySelectorAll("[placeholder],[aria-label],[title],img[alt],input[type=submit],input[type=button]") : [];
+    Array.prototype.forEach.call(els, function (e) {
+      if (e.closest("[data-notr],[translate=no]")) { return; }
+      ["placeholder", "aria-label", "title", "alt", "value"].forEach(function (a) {
+        if ((a === "value" && e.tagName !== "INPUT") || !e.hasAttribute(a)) { return; }
+        var t = trTexto(e.getAttribute(a)); if (t != null) { e.setAttribute(a, t); }
+      });
+    });
+  }
+  if (LANG !== "es") {
+    (function () {
+      var sc = document.createElement("script");
+      sc.src = "/assets/zienna/disponibilidad/tr/" + LANG + ".js?v=" + ((document.querySelector('script[src*="index.js"]') || {}).src || "").split("v=")[1];
+      sc.onload = function () {
+        ZTR = window.ZTR || null; if (!ZTR) { return; }
+        document.title = trTexto(document.title) || document.title;
+        trNodo(document.body);
+        var obs = new MutationObserver(function (ms) {
+          obs.disconnect();
+          ms.forEach(function (m) {
+            if (m.type === "characterData") { var t = trTexto(m.target.nodeValue); if (t != null) { m.target.nodeValue = t; } }
+            Array.prototype.forEach.call(m.addedNodes || [], function (x) { if (x.nodeType === 1) { trNodo(x); } else if (x.nodeType === 3) { var t = trTexto(x.nodeValue); if (t != null) { x.nodeValue = t; } } });
+          });
+          obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+        });
+        obs.observe(document.body, { childList: true, subtree: true, characterData: true });
+      };
+      document.head.appendChild(sc);
+    })();
+  }
   function TX(k, n) {
     var t = I18N[LANG] && I18N[LANG][k] != null ? I18N[LANG][k] : I18N.es[k];
     return typeof t === "string" ? t.replace("{n}", n == null ? "" : n) : t;
@@ -96,8 +154,8 @@
     var t = TASAS && MON !== "PEN" ? TASAS[MON] : 0;
     if (!t) { return "S/ " + Number(n).toLocaleString("es-PE"); }
     var v = Number(n) * t;
-    try { return "≈ " + new Intl.NumberFormat(LOC(), { style: "currency", currency: MON, maximumFractionDigits: v >= 100 ? 0 : 2 }).format(v); }
-    catch (e) { return "≈ " + MON + " " + Math.round(v); }
+    try { return new Intl.NumberFormat(LOC(), { style: "currency", currency: MON, maximumFractionDigits: v >= 10 ? 0 : 2, minimumFractionDigits: 0 }).format(v); }
+    catch (e) { return MON + " " + Math.round(v); }
   }
   function manana() { var d = new Date(); d.setDate(d.getDate() + 1); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
   // Si no hay búsqueda guardada (o ya pasó), arranca con hoy y mañana.
@@ -235,7 +293,7 @@
   // «Buscar» lleva a Alojamientos con todo elegido. Se usa en la portada de Wix (recuadro modo=caja, con la imagen de la
   // caja de siempre debajo mientras carga) y en la portada propia. `arriba`: el panel se abre hacia arriba (celular en Wix,
   // donde abajo se corta la sección). `T`: textos (portada propia en 10 idiomas).
-  var DOW_C = ["L", "M", "M", "J", "V", "S", "D"];
+  var DOW_C = DIAS();
   function cajaBusqueda(caja, op) {
     op = op || {};
     var CEL = op.cel, T = op.T || {}, abierto = "", off = 0, z = busq.z || "";
@@ -505,7 +563,7 @@
     if (!datosMes) { caja.innerHTML = '<p class="dz-nota">Cargando calendario…</p>'; return; }
     var ll = busq.ll, sa = busq.sa, hoyM = hoy().slice(0, 7);
     var h = '<div class="dz-mes-nav"><button type="button" data-nav="-1" aria-label="Mes anterior"' + (mesCal <= hoyM ? " disabled" : "") + '>‹</button><b>' + mesTxt(mesCal) + '</b><button type="button" data-nav="1" aria-label="Mes siguiente">›</button></div><div class="dz-grid">';
-    ["L", "M", "M", "J", "V", "S", "D"].forEach(function (x) { h += '<div class="dz-dow">' + x + '</div>'; });
+    DIAS().forEach(function (x) { h += '<div class="dz-dow">' + x + '</div>'; });
     for (var i = 0; i < datosMes.primer_dia_semana; i++) { h += '<div class="dz-dia vacio"></div>'; }
     // Opción «lo mínimo» de Hugo (17-11-2026, noche): blanco y negro, sin tachar los días que sirven
     // para salir, y una raya fina que une cada tramo libre (del primer día de llegada al día de salida).
@@ -1692,7 +1750,7 @@
       var h = "", ym = sumaMes(hoy().slice(0, 7), PC ? off : 0), hoyF = hoy();
       for (var k = 0; k < (PC ? 2 : 12); k++, ym = sumaMes(ym, 1)) {
         var p = ym.split("-"), d1 = new Date(+p[0], +p[1] - 1, 1), dias = new Date(+p[0], +p[1], 0).getDate(), vacios = (d1.getDay() + 6) % 7;
-        h += '<section class="bu-mes"><h3>' + mesTxt(ym) + '</h3>' + (PC ? '<div class="bu-dow bu-dowm"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>' : '') + '<div class="bu-grid">';
+        h += '<section class="bu-mes"><h3>' + mesTxt(ym) + '</h3>' + (PC ? '<div class="bu-dow bu-dowm">' + DIAS().map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' : '') + '<div class="bu-grid">';
         for (var i = 0; i < vacios; i++) { h += '<span></span>'; }
         for (var d = 1; d <= dias; d++) {
           var f = ym + "-" + pad(d), c = "bu-d";
@@ -1723,7 +1781,7 @@
       if (PC) { pasoCalPC(); return; }
       app.innerHTML = cab() + '<div class="bu"><h1>¿Cuándo viajas?</h1>' + chipsZona("bu-z") +
         '<div class="bu-sel"><div class="bu-c" id="bu-cll"><span>Llegada</span><b id="bu-ll"></b></div><div class="bu-c" id="bu-csa"><span>Salida</span><b id="bu-sa"></b></div></div>' +
-        '<div class="bu-dow"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>' +
+        '<div class="bu-dow">' + DIAS().map(function (x) { return '<span>' + x + '</span>'; }).join('') + '</div>' +
         '<div id="bu-meses">' + mesesHTML() + '</div></div>' +
         '<div class="bu-pie"><div class="bu-hu"><span>Huéspedes</span><div><button type="button" id="bu-menos" aria-label="Menos huéspedes">−</button><b id="bu-h"></b><button type="button" id="bu-mas" aria-label="Más huéspedes">+</button></div></div>' +
         '<div class="bu-acc"><button type="button" class="bu-borrar" id="bu-borrar">Borrar</button><span class="bu-lin" id="bu-lin"></span><button type="button" class="bu-go" id="bu-go">Buscar</button></div></div>';
@@ -1955,9 +2013,9 @@
   function selectoresLM(corto, soloMon) {
     var L = IDIOMAS.filter(function (x) { return x[0] === LANG; })[0] || IDIOMAS[0];
     var M = MONEDAS.filter(function (x) { return x[0] === MON; })[0] || MONEDAS[0];
-    var h = soloMon ? "" : '<label class="hl-pas zsel">' + GLOBO + '<span>' + (corto ? LANG.toUpperCase() : L[1]) + '</span><i>▾</i><select data-zsel="lang" aria-label="Idioma / Language">' +
+    var h = soloMon ? "" : '<label class="hl-pas zsel" data-notr>' + GLOBO + '<span>' + (corto ? LANG.toUpperCase() : L[1]) + '</span><i>▾</i><select data-zsel="lang" aria-label="Idioma / Language">' +
       IDIOMAS.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === LANG ? " selected" : "") + '>' + x[1] + '</option>'; }).join("") + '</select></label>';
-    return h + '<label class="hl-pas zsel"><span>' + M[1] + " " + M[0] + '</span><i>▾</i><select data-zsel="mon" aria-label="Moneda / Currency">' +
+    return h + '<label class="hl-pas zsel" data-notr><span>' + M[1] + " " + M[0] + '</span><i>▾</i><select data-zsel="mon" aria-label="Moneda / Currency">' +
       MONEDAS.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === MON ? " selected" : "") + '>' + x[1] + " " + x[0] + '</option>'; }).join("") + '</select></label>';
   }
   function avisarMarcos() {
@@ -2589,7 +2647,8 @@
       $("in-lista").addEventListener("click", function (ev) {
         var li = ev.target.closest("li[data-l]"); if (!li) { return; }
         lang = li.getAttribute("data-l"); try { localStorage.setItem("zlang", lang); } catch (e) {}
-        pintar();
+        // Se recarga con ?lang= para que TODO (caja, fechas, textos) quede en el idioma nuevo.
+        var u = new URL(location.href); u.searchParams.set("lang", lang); location.href = u.toString();
       });
       $("in-puntos").addEventListener("click", function (ev) { var b = ev.target.closest("button[data-k]"); if (b) { ir(+b.getAttribute("data-k")); } });
       ligarMarco();
