@@ -874,8 +874,8 @@
     if (document.getElementById("tj-rs")) {
       llamarSWR("resenas", { propiedad: PROP }, function (d) {
         var r = (d.items || [])[0]; if (!r) { return; }
-        var t = r.texto.length > 120 ? r.texto.slice(0, 117).replace(/\s+\S*$/, "") + "…" : r.texto;
-        document.getElementById("tj-rs").innerHTML = '<span class="serif">«' + esc(t) + '»</span><small>' + esc(r.nombre) + (r.lugar ? ", " + esc(r.lugar) : "") +
+        // Texto entero (se corta con CSS) para que el traductor de página lo encuentre en el diccionario.
+        document.getElementById("tj-rs").innerHTML = '<span class="serif tj-rs-t">«<span>' + esc(r.texto) + '</span>»</span><small>' + esc(r.nombre) + (r.lugar ? ", " + esc(r.lugar) : "") +
           ' · <span class="estr">★</span> ' + esc(nota(d.nota)) + ' · ' + esc(d.total) + ' reseñas en Airbnb</small>';
       });
     }
