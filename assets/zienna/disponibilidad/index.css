@@ -2248,5 +2248,34 @@ html:lang(ja) body, html:lang(zh) body { line-break: strict; }
 body.la-sin-scroll { overflow: hidden; }
 /* botón flotante Mapa / Lista */
 .la-cel .la-vmap { display: inline-flex; align-items: center; gap: 8px; position: fixed; left: 50%; transform: translateX(-50%); bottom: 22px; z-index: 1200; border: 0; background: #141210; color: #fff; border-radius: 999px; padding: 12px 20px; font: 600 14px Manrope, sans-serif; box-shadow: 0 10px 24px -8px rgba(0,0,0,.5); cursor: pointer; }
-body.la-sin-scroll .la-vmap { display: none !important; }
+body.la-sin-scroll .la-vmap, body.la-pie-vista .la-vmap { display: none !important; }
 .la-cel .la-hoja { z-index: 1300; }
+
+/* Celular (Hugo 20-11-2026): arriba «B» — ☰ a la izquierda, logo al centro, ♡ a la derecha, 44 px; idioma y moneda
+   dentro del menú. Pie «A» en 3 columnas y lo más bajo posible (~200 px; antes ~400 aquí y 685 en Wix). */
+.zw-cel.zw-cab.zw-cab-b { display: grid; grid-template-columns: 48px 1fr 48px; height: 44px; padding: 0 10px; gap: 0; }
+.zw-cab-b .zw-menu { grid-column: 1; grid-row: 1; width: 36px; height: 36px; gap: 5px; padding: 0 6px; }
+.zw-cab-b .zw-menu.abierto i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.zw-cab-b .zw-menu.abierto i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+.zw-cab-b .zw-logo { grid-column: 2; grid-row: 1; justify-self: center; }
+.zw-cab-b .zw-logo img { height: 22px; }
+.zw-cab-b .zw-fav { grid-column: 3; grid-row: 1; justify-self: end; margin: 0 4px 0 0; }
+.zw-cab-b .zw-fav svg { width: 22px; height: 22px; }
+.zw-cab-b .zw-nav-cel { top: 44px; }
+.zw-cel.zw-cab.zw-corto { height: 44px; }
+.zw-nav-pref { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 6px 0 12px; border-bottom: 1px solid #eee; }
+.zw-nav-pref:empty { display: none; }
+.zw-nav-pref .zsel { margin-left: 0 !important; }
+.zw-nav-cel .zw-nav-pref a { border: 0; padding: 6px 4px; font-size: 15px; }
+.zw-cel.zw-pie.zw-pie3 { padding-top: 18px; }
+.zw-p3-f1 { display: flex; align-items: center; justify-content: space-between; }
+.zw-pie3 .zw-pie-logo img { width: auto; height: 24px; margin: 0; }
+.zw-pie3 .zw-lr { margin: 0; padding: 3px; border-radius: 7px; }
+.zw-pie3 .zw-lr img { width: 44px; }
+.zw-p3-c { display: grid; grid-template-columns: 1.05fr 1fr .8fr; gap: 10px; margin-top: 14px; }
+.zw-p3-c b { display: block; font-weight: 500; font-size: 10px; letter-spacing: .16em; opacity: .55; margin-bottom: 4px; }
+.zw-p3-c a, .zw-p3-c span { display: block; color: #fff; font-size: 13px; line-height: 1.6; font-weight: 300; }
+.zw-p3-c a { text-decoration: underline; text-underline-offset: 3px; }
+.zw-pie3 .zw-redes { display: flex !important; gap: 12px; margin-top: 5px; }
+.zw-pie3 .zw-ig { width: auto; height: auto; border: 0; border-radius: 0; text-decoration: none; }
+.zw-pie3 small { display: block; margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,.2); font-size: 11px; opacity: .6; font-weight: 300; }
