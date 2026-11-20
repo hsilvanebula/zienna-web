@@ -80,13 +80,44 @@
   // generado con scratchpad i18n/). Se aplica a los textos y a placeholder/aria-label/title/alt, y otra vez cada vez que
   // algo se repinta (MutationObserver). Si un texto lleva números se busca con {n}. data-notr / translate="no" = no tocar.
   var ZTR = null, ZTR_ESPERA = [];
+  // Fechas del idioma (p. ej. «21 janv.», «sam. 21 janv.», «1月21日») → {d}, para buscar la frase en el diccionario.
+  var RE_FECHA = null;
+  function reFecha() {
+    if (RE_FECHA !== null) { return RE_FECHA; }
+    try {
+      var alt = [], f1 = new Intl.DateTimeFormat(LOC(), { day: "numeric", month: "short" }), f2 = new Intl.DateTimeFormat(LOC(), { weekday: "short", day: "numeric", month: "short" });
+      var esc2 = function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); };
+      for (var m = 0; m < 12; m++) { [f2, f1].forEach(function (f) { for (var d = 1; d <= 7; d++) { alt.push(esc2(f.format(new Date(2026, m, 20 + d))).replace(/2[1-8]/, "\\d{1,2}")); } }); }
+      alt = alt.filter(function (x, k) { return alt.indexOf(x) === k; }).sort(function (a, b) { return b.length - a.length; });
+      RE_FECHA = new RegExp(alt.join("|"), "g");
+    } catch (e) { RE_FECHA = false; }
+    return RE_FECHA;
+  }
+  function trUno(k) {
+    if (ZTR[k] != null) { return ZTR[k]; }
+    var fechas = [], nums = [], pl = k;
+    var rf = reFecha(); if (rf) { pl = pl.replace(rf, function (m) { fechas.push(m); return "{d}"; }); }
+    pl = pl.replace(/\d+(?:[.,:]\d+)*/g, function (m) { nums.push(m); return "{n}"; });
+    if ((fechas.length || nums.length) && ZTR[pl] != null) {
+      var i = 0, j = 0;
+      return ZTR[pl].replace(/\{d\}/g, function () { return fechas[j++] || ""; }).replace(/\{n\}/g, function () { return nums[i++] || ""; });
+    }
+    return null;
+  }
   function trTexto(t) {
     if (!ZTR) { return null; }
     var k = t.replace(/\s+/g, " ").trim();
     if (!k || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(k)) { return null; }
-    if (ZTR[k] != null) { return ZTR[k]; }
-    var nums = [], pl = k.replace(/\d+(?:[.,]\d+)*/g, function (m) { nums.push(m); return "{n}"; });
-    if (nums.length && ZTR[pl] != null) { var i = 0; return ZTR[pl].replace(/\{n\}/g, function () { return nums[i++] || ""; }); }
+    var r = trUno(k); if (r != null) { return r; }
+    // Por partes: «San Isidro · Vista al mar», «2 huéspedes (máximo 2)», «71 US$ × 2 noches»…
+    var trozos = k.split(/(\s*[·•—–→×|]\s*|\s*\(\s*|\s*\)\s*|,\s+|:\s+)/), cambio = false;
+    if (trozos.length > 1) {
+      var out = trozos.map(function (x, n) {
+        if (n % 2 || !/[A-Za-zÁÉÍÓÚÑáéíóúñ]/.test(x)) { return x; }
+        var y = trUno(x.trim()); if (y != null) { cambio = true; return y; } return x;
+      });
+      if (cambio) { return out.join(""); }
+    }
     return null;
   }
   function trNodo(raiz) {
@@ -1228,7 +1259,7 @@
     ["591", "Bolivia"], ["598", "Uruguay"], ["595", "Paraguay"], ["58", "Venezuela"], ["34", "España"], ["33", "Francia"], ["39", "Italia"], ["44", "Reino Unido"],
     ["49", "Alemania"], ["351", "Portugal"], ["41", "Suiza"], ["31", "Países Bajos"], ["81", "Japón"], ["86", "China"], ["61", "Australia"]];
   var DIAS_C = ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"];
-  function fechaLarga(f) { var p = partes(f), d = new Date(p.a, p.m - 1, p.d); return DIAS_C[d.getDay()] + " " + p.d + " " + MESES_C[p.m - 1]; }
+  function fechaLarga(f) { var p = partes(f), d = new Date(p.a, p.m - 1, p.d); if (LANG !== "es") { try { return new Intl.DateTimeFormat(LOC(), { weekday: "short", day: "numeric", month: "short" }).format(d); } catch (e) {} } return DIAS_C[d.getDay()] + " " + p.d + " " + MESES_C[p.m - 1]; }
   function enviarPost(metodo, params, rapido) {
     return fetch(urlApi(metodo), { method: "POST", keepalive: !!rapido, credentials: "same-origin",
       headers: { "Content-Type": "application/json", "Accept": "application/json", "X-Frappe-CSRF-Token": (window.frappe && frappe.csrf_token) || window.csrf_token || "" },
@@ -1275,7 +1306,7 @@
       '<hr><b class="sl-tar-h">Detalle del precio</b><div class="sl-tar-f"><u>' + esc(precioTxt) + '</u><span>' + soles(sub) + '</span></div>' +
       (f.descuento ? '<div class="sl-tar-f"><span>' + (f.descuento_motivo === "ultimo_minuto" ? "Descuento de último minuto" : "Descuento reserva directa") + ' (' + f.descuento_pct + ' %)</span><span class="sl-desc">−' + soles(f.descuento) + '</span></div>' : '') +
       '<div class="sl-tar-f"><span>Limpieza</span><span class="sl-incl">Incluida</span></div>' +
-      '<div class="sl-tar-tot"><b>Total (PEN)</b><span>' + precioTachado(f) + '</span></div><div id="sl-srv" hidden></div><p class="sl-fin">Es el precio final. No pagas nada más.</p></div></aside>';
+      '<div class="sl-tar-tot"><b>Total (' + MON + ')</b><span>' + precioTachado(f) + '</span></div>' + (MON !== "PEN" ? '<p class="sl-pen">Se cobra en soles: S/ ' + Number(f.total).toLocaleString("es-PE") + '</p>' : '') + '<div id="sl-srv" hidden></div><p class="sl-fin">Es el precio final. No pagas nada más.</p></div></aside>';
     var h = marcoPaso("Alojamientos", volver, true) ? '<div class="sl sl-b">' :
       '<div class="sl sl-b"><div class="sl-cab"><a class="sl-marca" href="' + esc(WEB) + '" target="_top"><img src="' + ASSET + 'zienna_icono.png" alt="">Zienna Living &amp; Aparts</a><a class="sl-volver" href="' + esc(volver) + '" target="_top">← Volver al alojamiento</a></div>';
     h += '<div class="sl-cols">' + side + '<div class="sl-main"><div class="sl-prog"><i class="on" id="sp1"></i><i id="sp2"></i><i id="sp3"></i></div>';
@@ -2751,7 +2782,7 @@
       } else if (e.fuera && total) { var r = Math.round(total * C.recargo_fuera_pct / 100); lin.push(["Fuera de horario (+" + C.recargo_fuera_pct + " %)", r]); total += r; }
       return { total: i >= 0 ? total : 0, lin: lin };
     }
-    function fechaTxt(f) { var d = new Date(f + "T12:00:00"); return ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"][d.getDay()] + " " + d.getDate() + " " + MESES_C[d.getMonth()]; }
+    function fechaTxt(f) { var d = new Date(f + "T12:00:00"); if (LANG !== "es") { try { return new Intl.DateTimeFormat(LOC(), { weekday: "short", day: "numeric", month: "short" }).format(d); } catch (e) {} } return ["dom", "lun", "mar", "mié", "jue", "vie", "sáb"][d.getDay()] + " " + d.getDate() + " " + MESES_C[d.getMonth()]; }
     function puede() {
       if (paso === 1) { return !!e.s; }
       if (paso === 2) { return !!(e.d && zona() && idxTramo() >= 0); }
