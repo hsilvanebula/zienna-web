@@ -41,12 +41,23 @@
   // Idioma y moneda en toda la web (Hugo, 20-11-2026: «cuando cambia el idioma, tiene que cambiar absolutamente toda la
   // página»; «moneda referencial con el tipo de cambio»). Viajan entre dominios en ?lang= y ?mon= (el localStorage no se
   // comparte entre registro y web) y se recuerdan en zlang / zmon.
+  // Preferencias compartidas por TODA la web (Hugo, 20-11-2026: cambió a español en la portada y Limpieza seguía en
+  // japonés). web.bookzienna.com y registro.bookzienna.com no comparten localStorage: se guardan en una cookie de
+  // .bookzienna.com (la ven todos los subdominios). En localhost, localStorage.
+  function prefLeer(k) {
+    try { var m = document.cookie.match(new RegExp("(?:^|; )" + k + "=([^;]*)")); if (m) { return decodeURIComponent(m[1]); } } catch (e) {}
+    try { return localStorage.getItem(k) || ""; } catch (e) { return ""; }
+  }
+  function prefGuardar(k, v) {
+    try { var dom = /(^|\.)bookzienna\.com$/.test(location.hostname) ? "; domain=.bookzienna.com" : ""; document.cookie = k + "=" + encodeURIComponent(v) + "; path=/; max-age=31536000; SameSite=Lax" + dom + (location.protocol === "https:" ? "; Secure" : ""); } catch (e) {}
+    try { localStorage.setItem(k, v); } catch (e) {}
+  }
   var LANGS = ["es", "en", "pt", "fr", "de", "it", "zh", "ja", "ko", "ru"];
   var LOCALES = { es: "es-PE", en: "en-US", pt: "pt-BR", fr: "fr-FR", de: "de-DE", it: "it-IT", zh: "zh-CN", ja: "ja-JP", ko: "ko-KR", ru: "ru-RU" };
   (function () {
     var l = (Q.get("lang") || "").toLowerCase();
-    if (LANGS.indexOf(l) < 0) { try { l = localStorage.getItem("zlang") || ""; } catch (e) { l = ""; } }
-    if (LANGS.indexOf(l) >= 0) { LANG = l; try { localStorage.setItem("zlang", l); } catch (e) {} }
+    if (LANGS.indexOf(l) < 0) { l = prefLeer("zlang"); }
+    if (LANGS.indexOf(l) >= 0) { LANG = l; prefGuardar("zlang", l); }
   })();
   function LOC() { return LOCALES[LANG] || "es-PE"; }
   try { document.documentElement.lang = LANG; } catch (e) {}
@@ -59,8 +70,8 @@
     ["GBP", "£"], ["CAD", "CA$"], ["AUD", "AU$"], ["CHF", "CHF"], ["CNY", "¥"], ["JPY", "¥"], ["KRW", "₩"], ["RUB", "₽"]];
   function monValida(m) { return MONEDAS.some(function (x) { return x[0] === m; }) ? m : ""; }
   var MON = monValida((Q.get("mon") || "").toUpperCase());
-  if (!MON) { try { MON = monValida(localStorage.getItem("zmon") || "") || "PEN"; } catch (e) { MON = "PEN"; } }
-  try { localStorage.setItem("zmon", MON); } catch (e) {}
+  if (!MON) { MON = monValida(prefLeer("zmon")) || "PEN"; }
+  prefGuardar("zmon", MON);
   // Tipo de cambio referencial: open.er-api.com (gratis, sin clave, se actualiza cada día). Se guarda 6 h; si al entrar
   // no había tasas y la moneda no es soles, la página se vuelve a pintar una vez cuando llegan.
   var TASAS = null;
@@ -2075,8 +2086,8 @@
     var el = ev.target, k = el && el.getAttribute ? el.getAttribute("data-zsel") : "";
     if (!k) { return; }
     var v = el.value;
-    if (k === "mon") { MON = monValida(v) || "PEN"; try { localStorage.setItem("zmon", MON); } catch (e) {} avisarMarcos(); }
-    else { LANG = LANGS.indexOf(v) >= 0 ? v : "es"; try { localStorage.setItem("zlang", LANG); } catch (e) {} }
+    if (k === "mon") { MON = monValida(v) || "PEN"; prefGuardar("zmon", MON); avisarMarcos(); }
+    else { LANG = LANGS.indexOf(v) >= 0 ? v : "es"; prefGuardar("zlang", LANG); }
     if (MODO === "idioma") {
       if (k === "lang" && LANG !== "es") { window.top.location.href = FIJAS + "/inicio/?lang=" + LANG + (MON !== "PEN" ? "&mon=" + MON : ""); return; }
       modoIdioma(); return;
@@ -2089,7 +2100,7 @@
     var d = ev.data, ok = false;
     try { ok = /(^|\.)bookzienna\.com$/.test(new URL(ev.origin).hostname) || ev.origin === location.origin; } catch (e) { ok = false; }
     if (!ok || !d || !d.zmon || !monValida(d.zmon) || d.zmon === MON || MODO === "idioma") { return; }
-    try { localStorage.setItem("zmon", d.zmon); } catch (e) {}
+    prefGuardar("zmon", d.zmon);
     var u = new URL(location.href); u.searchParams.set("mon", d.zmon); location.replace(u.toString());
   });
   // Los enlaces entre páginas de Zienna llevan el idioma y la moneda. La portada de Wix solo existe en español: en otro
@@ -2103,8 +2114,8 @@
       if (u.pathname === "/" || u.pathname === "") { u = new URL(FIJAS + "/inicio/"); }
       else if (u.pathname === "/contacto") { u = new URL(RAPIDA + "/disponibilidad?modo=contacto"); }
     }
-    if (LANG !== "es") { u.searchParams.set("lang", LANG); }
-    if (MON !== "PEN") { u.searchParams.set("mon", MON); }
+    if (/^(www\.)?bookzienna\.com$/.test(u.hostname)) { if (LANG !== "es") { u.searchParams.set("lang", LANG); } }
+    else { u.searchParams.set("lang", LANG); u.searchParams.set("mon", MON); }
     a.href = u.toString();
   }, true);
   function marcoWeb(CEL, actual, extra) {
@@ -2423,7 +2434,7 @@
   // Traslado al aeropuerto y eSIM Holafly en dos tarjetas con foto (fotos CC0 de StockSnap). Idioma con ?lang= (10 idiomas).
   function modoBeneficios() {
     var lang = (Q.get("lang") || "").toLowerCase();
-    if (!I18N[lang]) { try { lang = localStorage.getItem("zlang") || ""; } catch (e) { lang = ""; } }
+    if (!I18N[lang]) { lang = prefLeer("zlang"); }
     if (!I18N[lang]) { lang = String(navigator.language || "es").slice(0, 2).toLowerCase(); }
     LANG = I18N[lang] ? lang : "es";
     document.documentElement.lang = LANG;
@@ -2656,7 +2667,7 @@
   function modoInicio() {
     var CEL = window.innerWidth < 760, $ = function (id) { return document.getElementById(id); };
     var lang = (Q.get("lang") || "").toLowerCase();
-    if (!PORTADA_T[lang]) { try { lang = localStorage.getItem("zlang") || ""; } catch (e) { lang = ""; } }
+    if (!PORTADA_T[lang]) { lang = prefLeer("zlang"); }
     if (!PORTADA_T[lang]) { lang = "es"; }
     document.body.className += " in-en pt-en " + (CEL ? "in-cel pt-cel" : "pt-pc");
     letraZienna();
@@ -2696,7 +2707,7 @@
       $("in-pas").addEventListener("click", function (ev) { ev.stopPropagation(); var l = $("in-lista"); l.hidden = !l.hidden; this.setAttribute("aria-expanded", l.hidden ? "false" : "true"); });
       $("in-lista").addEventListener("click", function (ev) {
         var li = ev.target.closest("li[data-l]"); if (!li) { return; }
-        lang = li.getAttribute("data-l"); try { localStorage.setItem("zlang", lang); } catch (e) {}
+        lang = li.getAttribute("data-l"); prefGuardar("zlang", lang);
         // Se recarga con ?lang= para que TODO (caja, fechas, textos) quede en el idioma nuevo.
         var u = new URL(location.href); u.searchParams.set("lang", lang); location.href = u.toString();
       });
