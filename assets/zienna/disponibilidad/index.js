@@ -93,14 +93,32 @@
     } catch (e) { RE_FECHA = false; }
     return RE_FECHA;
   }
+  // Precios en la moneda elegida («23 $US», «US$ 1,234») → «S/ {n}», como están en el diccionario.
+  var RE_MON = null;
+  function reMon() {
+    if (RE_MON !== null) { return RE_MON; }
+    RE_MON = false;
+    if (MON === "PEN") { return RE_MON; }
+    try {
+      var ej = new Intl.NumberFormat(LOC(), { style: "currency", currency: MON, maximumFractionDigits: 0 }).format(1234);
+      var esc2 = function (x) { return x.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); };
+      var i = ej.search(/\d/), f = ej.length - ej.split("").reverse().join("").search(/\d/);
+      RE_MON = new RegExp(esc2(ej.slice(0, i)).replace(/\s/g, "\\s?") + "\\d[\\d.,\\s\u00a0\u202f]*\\d|" + esc2(ej.slice(0, i)).replace(/\s/g, "\\s?") + "\\d" + (f < ej.length ? "" : ""), "g");
+      var pre = esc2(ej.slice(0, i)).replace(/\s/g, "\\s?"), post = esc2(ej.slice(f)).replace(/\s/g, "\\s?");
+      RE_MON = new RegExp(pre + "\\d(?:[\\d.,\u00a0\u202f ]*\\d)?" + post, "g");
+    } catch (e) { RE_MON = false; }
+    return RE_MON;
+  }
   function trUno(k) {
     if (ZTR[k] != null) { return ZTR[k]; }
-    var fechas = [], nums = [], pl = k;
+    var fechas = [], nums = [], mons = [], pl = k;
+    var rm = reMon(); if (rm) { pl = pl.replace(rm, function (m) { mons.push(m); return "\u0001"; }); }
     var rf = reFecha(); if (rf) { pl = pl.replace(rf, function (m) { fechas.push(m); return "{d}"; }); }
-    pl = pl.replace(/\d+(?:[.,:]\d+)*/g, function (m) { nums.push(m); return "{n}"; });
-    if ((fechas.length || nums.length) && ZTR[pl] != null) {
-      var i = 0, j = 0;
-      return ZTR[pl].replace(/\{d\}/g, function () { return fechas[j++] || ""; }).replace(/\{n\}/g, function () { return nums[i++] || ""; });
+    pl = pl.replace(/\{d\}\./g, "{d}");
+    pl = pl.replace(/\d+(?:[.,:]\d+)*/g, function (m) { nums.push(m); return "{n}"; }).replace(/\u0001/g, "S/ {n}");
+    if ((fechas.length || nums.length || mons.length) && ZTR[pl] != null) {
+      var i = 0, j = 0, q = 0;
+      return ZTR[pl].replace(/S\/\s?\{n\}/g, function () { return mons[q++] || ""; }).replace(/\{d\}/g, function () { return fechas[j++] || ""; }).replace(/\{n\}/g, function () { return nums[i++] || ""; }).replace(/([^.])\.\.(?!\.)/g, "$1.");
     }
     return null;
   }
