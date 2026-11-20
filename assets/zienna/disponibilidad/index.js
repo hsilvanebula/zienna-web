@@ -31,6 +31,7 @@
   RUTAS["/caja"] = "caja";
   RUTAS["/beneficios"] = "beneficios";
   RUTAS["/idioma"] = "idioma";
+  RUTAS["/pie"] = "pie";
   var MODO = Q.get("modo") || RUTAS[RUTA] || "resultados";
   var PROP = Q.get("p") || FICHAS_RAPIDAS[RUTA] || "";
   var APP = app;
@@ -2105,7 +2106,7 @@
   window.addEventListener("message", function (ev) {
     var d = ev.data, ok = false;
     try { ok = /(^|\.)bookzienna\.com$/.test(new URL(ev.origin).hostname) || ev.origin === location.origin; } catch (e) { ok = false; }
-    if (!ok || !d || !d.zmon || !monValida(d.zmon) || d.zmon === MON || MODO === "idioma") { return; }
+    if (!ok || !d || !d.zmon || !monValida(d.zmon) || d.zmon === MON || MODO === "idioma" || MODO === "pie") { return; }
     prefGuardar("zmon", d.zmon);
     var u = new URL(location.href); u.searchParams.set("mon", d.zmon); location.replace(u.toString());
   });
@@ -2481,6 +2482,14 @@
     var con = { es: "Contacto", en: "Contact", pt: "Contato", fr: "Contact", de: "Kontakt", it: "Contatti", zh: "联系", ja: "お問い合わせ", ko: "문의", ru: "Контакты" }[LANG] || "Contacto";
     app.innerHTML = '<div class="hl">' + selectoresLM(!tel) + '<a class="hl-con" target="_top" href="' + RAPIDA + '/disponibilidad?modo=contacto' + (LANG !== "es" ? "&lang=" + LANG : "") + '">' + con + '</a></div>';
     avisarMarcos();
+  }
+  // /pie — el pie de celular (3 columnas) para incrustarlo en el pie de Wix en celular (Hugo 20-11-2026: «menos alto»).
+  // Todos los enlaces abren arriba (fuera del recuadro). El fondo negro llena lo que sobre si el recuadro es más alto.
+  function modoPie() {
+    document.documentElement.style.background = "#000";
+    if (document.body.className.indexOf("pie-solo") < 0) { document.body.className += " pie-solo"; }
+    app.innerHTML = marcoWeb(true, "").pie;
+    Array.prototype.forEach.call(app.querySelectorAll("a"), function (a) { if (!/^mailto:/.test(a.href)) { a.target = "_top"; } });
   }
   var DISTRITOS = ["San Miguel", "San Isidro", "Lince"];
   function zonaValida(z) { return DISTRITOS.indexOf(z || "") >= 0 ? z : ""; }
@@ -3188,6 +3197,7 @@
   else if (MODO === "caja") { modoCaja(); }
   else if (MODO === "beneficios") { modoBeneficios(); }
   else if (MODO === "idioma") { modoIdioma(); }
+  else if (MODO === "pie") { modoPie(); }
   else if (MODO === "buscar") { modoBuscar(); }
   else if (MODO === "limpieza") { modoLimpieza(); }
   else if (MODO === "agenda") { modoAgenda(); }
