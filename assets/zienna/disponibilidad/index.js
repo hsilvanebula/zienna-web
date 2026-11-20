@@ -49,6 +49,7 @@
     if (LANGS.indexOf(l) >= 0) { LANG = l; try { localStorage.setItem("zlang", l); } catch (e) {} }
   })();
   function LOC() { return LOCALES[LANG] || "es-PE"; }
+  try { document.documentElement.lang = LANG; } catch (e) {}
   function DIAS() {
     if (LANG === "es") { return ["L", "M", "M", "J", "V", "S", "D"]; }
     try { var f = new Intl.DateTimeFormat(LOC(), { weekday: LANG === "zh" || LANG === "ja" || LANG === "ko" ? "narrow" : "short" }); return [5, 6, 7, 8, 9, 10, 11].map(function (d) { return f.format(new Date(2024, 1, d)); }); }

@@ -2202,3 +2202,6 @@ body.hl-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !im
 .zw-cab.zw-cel .zsel { margin-left: 4px; padding: 5px 8px; font-size: 12.5px; gap: 4px; }
 .zw-cab.zw-cel .zsel svg { width: 14px; height: 14px; }
 .in-cab .zsel, .zw-cab .in-idi + .zsel { margin-left: 8px; }
+/* Chino, japonés y coreano no tienen espacios: los títulos deben poder partirse (20-11-2026). */
+html:lang(ja) h1, html:lang(ja) h2, html:lang(ja) h3, html:lang(zh) h1, html:lang(zh) h2, html:lang(zh) h3, html:lang(ko) h1, html:lang(ko) h2, html:lang(ko) h3 { white-space: normal !important; overflow-wrap: anywhere; word-break: normal; }
+html:lang(ja) body, html:lang(zh) body { line-break: strict; }
