@@ -2490,6 +2490,10 @@
     if (document.body.className.indexOf("pie-solo") < 0) { document.body.className += " pie-solo"; }
     app.innerHTML = marcoWeb(true, "").pie;
     Array.prototype.forEach.call(app.querySelectorAll("a"), function (a) { if (!/^mailto:/.test(a.href)) { a.target = "_top"; } });
+    // Wix agranda el recuadro en proporción al ancho del celular: el pie se escala igual (diseñado a 390 px de ancho),
+    // así su alto siempre calza con el recuadro y no se corta en celulares angostos.
+    function escalar() { app.style.zoom = String(Math.round(window.innerWidth / 390 * 1000) / 1000); }
+    escalar(); window.addEventListener("resize", escalar);
   }
   var DISTRITOS = ["San Miguel", "San Isidro", "Lince"];
   function zonaValida(z) { return DISTRITOS.indexOf(z || "") >= 0 ? z : ""; }
