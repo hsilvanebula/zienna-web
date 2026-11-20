@@ -2488,6 +2488,10 @@
     var c = document.createElement("link"); c.rel = "stylesheet"; c.href = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"; document.head.appendChild(c);
     var j = document.createElement("script"); j.src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"; j.onload = listo; document.head.appendChild(j);
   }
+  var LUPA = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+  var AJUSTES = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>';
+  var MAPA_ICO = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2zM9 4v14M15 6v14"/></svg>';
+  var LISTA_ICO = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>';
   function modoListado() {
     var CEL = window.innerWidth < 700;
     document.body.className += " la-en" + (CEL ? " la-cel" : "");
@@ -2499,12 +2503,17 @@
       '<p>Departamentos en San Isidro, San Miguel y Lince. Precio total visible antes de reservar.</p>' +
       '<a class="la-bar" id="la-bar" href="' + esc(urlBuscar("fechas")) + '"><span><small>LLEGADA</small><b id="la-ll"></b></span><span><small>SALIDA</small><b id="la-sa"></b></span>' +
       '<span><small>HUÉSPEDES</small><b id="la-h"></b></span><em>Buscar</em></a><p class="la-est" id="la-est"></p>' +
-      '<div class="la-chips" id="la-chips">' + ["", "San Miguel", "San Isidro", "Lince"].map(function (z) { return '<button type="button" data-z="' + z + '"' + (z === zona ? ' class="on"' : '') + '>' + (z || "Todas") + '</button>'; }).join("") +
-        '<span class="la-sep"></span><span class="la-pr-c"><button type="button" id="la-pr">Precio ▾</button><span class="la-pop" id="la-pop" hidden><small>PRECIO POR NOCHE (S/)</small><span class="la-pop-i"><label>Mínimo<input id="la-min" type="number" inputmode="numeric" min="0" step="10" placeholder="0"></label><label>Máximo<input id="la-max" type="number" inputmode="numeric" min="0" step="10" placeholder="Sin tope"></label></span>' +
+      // Celular, opción A de Hugo (20-11-2026): una pastilla con el resumen + botón de filtros; los filtros van en una hoja.
+      (CEL ? '<div class="la-resfila"><a class="la-res" id="la-res" href="' + esc(urlBuscar("fechas")) + '"><i aria-hidden="true">' + LUPA + '</i><span><b id="la-res-z"></b><small id="la-res-d"></small></span></a>' +
+        '<button type="button" class="la-fil" id="la-fil" aria-label="Filtros">' + AJUSTES + '<em id="la-fil-n" hidden></em></button></div>' +
+        '<div class="la-hoja" id="la-hoja" hidden><div class="la-hoja-c"><div class="la-hoja-cab"><b>Filtros</b><button type="button" id="la-hoja-x" aria-label="Cerrar">✕</button></div>' : '') +
+      '<div class="la-chips" id="la-chips">' + (CEL ? '<h4 class="la-h4">DISTRITO</h4>' : '') + ["", "San Miguel", "San Isidro", "Lince"].map(function (z) { return '<button type="button" data-z="' + z + '"' + (z === zona ? ' class="on"' : '') + '>' + (z || "Todas") + '</button>'; }).join("") +
+        '<span class="la-sep"></span>' + (CEL ? '<h4 class="la-h4">PRECIO POR NOCHE</h4>' : '') + '<span class="la-pr-c"><button type="button" id="la-pr">Precio ▾</button><span class="la-pop" id="la-pop" hidden><small>PRECIO POR NOCHE (S/)</small><span class="la-pop-i"><label>Mínimo<input id="la-min" type="number" inputmode="numeric" min="0" step="10" placeholder="0"></label><label>Máximo<input id="la-max" type="number" inputmode="numeric" min="0" step="10" placeholder="Sin tope"></label></span>' +
         '<span class="la-pop-b"><button type="button" id="la-pr-q">Quitar</button><button type="button" id="la-pr-ok">Aplicar</button></span></span></span>' +
-        Object.keys(COMODIDADES).map(function (k) { return '<button type="button" data-c="' + k + '">' + COMODIDADES[k].t + '</button>'; }).join("") +
+        (CEL ? '<h4 class="la-h4">COMODIDADES</h4>' : '') + Object.keys(COMODIDADES).map(function (k) { return '<button type="button" data-c="' + k + '">' + COMODIDADES[k].t + '</button>'; }).join("") +
         '<button type="button" data-c="cuatro">Para 4 huéspedes</button></div>' +
-        (CEL ? '<div class="la-vista" id="la-vista"><button type="button" data-v="lista" class="on">Lista</button><button type="button" data-v="mapa">Mapa</button></div>' : '') + '</section>' +
+        (CEL ? '<div class="la-hoja-pie"><button type="button" id="la-hoja-borrar">Borrar todo</button><button type="button" id="la-hoja-ver"></button></div></div></div>' +
+          '<button type="button" class="la-vmap" id="la-vmap" data-v="mapa">' + MAPA_ICO + '<span>Mapa</span></button>' : '') + '</section>' +
         '<p class="la-cnt" id="la-cnt"></p><div class="la-split' + (CEL ? '' : ' la-split-pc') + '" id="la-split"><div class="la-g" id="la-g"><p class="la-vacio">Cargando…</p></div>' +
         '<div class="la-mapa" id="la-mapa"' + (CEL ? ' hidden' : '') + '><div id="la-m"></div><a class="la-flot" id="la-flot" hidden></a></div></div>' +
       '<section class="la-banda"><div><b id="la-bt">Reserva directo y paga 20\u00a0% menos</b><span id="la-bs">Promoción exclusiva a partir de 2 noches.</span></div><a href="' + esc(urlBuscar("fechas")) + '">Ver fechas libres</a></section></div>' + mw.pie;
@@ -2535,6 +2544,14 @@
         '<p class="la-vacio">' + (hayFiltros ? "Ningún alojamiento cumple esos filtros. Quita alguno para ver más." : conFechas() ? "No hay alojamientos libres del " + corto(busq.ll) + " al " + corto(busq.sa) + (zona ? " en " + esc(zona) : "") + ". Prueba otras fechas." : "No hay alojamientos en esta zona.") + '</p>';
       document.getElementById("la-cnt").innerHTML = xs.length ? '<b>' + xs.length + (xs.length === 1 ? ' alojamiento' : ' alojamientos') + '</b>' + (zona ? ' en ' + esc(zona) : '') : '';
       visibles = xs;
+      if (CEL) {
+        document.getElementById("la-res-z").textContent = zona || "Todos los distritos";
+        document.getElementById("la-res-d").textContent = (conFechas() ? corto(busq.ll) + " – " + corto(busq.sa) : "Elige tus fechas") + " · " + h + (h === 1 ? " huésped" : " huéspedes");
+        document.getElementById("la-res").href = urlBuscar("fechas");
+        var nf = (zona ? 1 : 0) + Object.keys(filtros).length + (precioMin || precioMax ? 1 : 0), en = document.getElementById("la-fil-n");
+        en.textContent = nf; en.hidden = !nf;
+        document.getElementById("la-hoja-ver").textContent = xs.length === 1 ? "Ver 1 alojamiento" : "Ver " + xs.length + " alojamientos";
+      }
       pintarMapa();
     }
     // ── filtros ──
@@ -2615,19 +2632,31 @@
       textoPrecio(); cerrarPop(); pintar();
     });
     if (CEL) {
-      document.getElementById("la-vista").addEventListener("click", function (ev) {
-        var b = ev.target.closest("button[data-v]"); if (!b) { return; }
-        var mp = b.getAttribute("data-v") === "mapa";
-        [].forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+      document.getElementById("la-vmap").addEventListener("click", function () {
+        var mp = this.getAttribute("data-v") === "mapa";
+        this.setAttribute("data-v", mp ? "lista" : "mapa");
+        this.innerHTML = mp ? LISTA_ICO + "<span>Lista</span>" : MAPA_ICO + "<span>Mapa</span>";
         document.getElementById("la-g").hidden = mp; document.getElementById("la-mapa").hidden = !mp;
         if (!mp) { document.getElementById("la-flot").hidden = true; }
-        pintarMapa();
+        window.scrollTo(0, 0); pintarMapa();
+      });
+      var hoja = document.getElementById("la-hoja");
+      var abrirHoja = function (si) { hoja.hidden = !si; document.body.classList.toggle("la-sin-scroll", si); };
+      document.getElementById("la-fil").addEventListener("click", function () { abrirHoja(true); });
+      document.getElementById("la-hoja-x").addEventListener("click", function () { abrirHoja(false); });
+      document.getElementById("la-hoja-ver").addEventListener("click", function () { abrirHoja(false); window.scrollTo(0, 0); });
+      hoja.addEventListener("click", function (ev) { if (ev.target === hoja) { abrirHoja(false); } });
+      document.getElementById("la-hoja-borrar").addEventListener("click", function () {
+        zona = ""; filtros = {}; precioMin = precioMax = 0;
+        document.getElementById("la-min").value = ""; document.getElementById("la-max").value = "";
+        [].forEach.call(document.querySelectorAll("#la-chips button[data-z], #la-chips button[data-c]"), function (x) { x.classList.toggle("on", x.getAttribute("data-z") === ""); });
+        textoPrecio(); pintar();
       });
     }
     document.getElementById("la-chips").addEventListener("click", function (ev) {
       var b = ev.target.closest("button[data-z]"); if (!b) { return; }
       zona = b.getAttribute("data-z");
-      [].forEach.call(this.children, function (x) { x.classList.toggle("on", x === b); });
+      [].forEach.call(this.querySelectorAll("button[data-z]"), function (x) { x.classList.toggle("on", x === b); });
       pintar();
     });
     document.getElementById("la-est").addEventListener("click", function (ev) {
