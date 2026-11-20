@@ -2195,3 +2195,10 @@ body.hl-en .dz-page { max-width: none; padding: 0; margin: 0; display: block !im
 /* La barra vieja de /inicio queda oculta: su display:grid le ganaba al atributo hidden (Hugo vio dos cajas, 20-11-2026). */
 .in-barra[hidden] { display: none !important; }
 .hl-tel .hl { justify-content: flex-start; padding-left: 0; }
+/* Pastillas de idioma y moneda en todas las páginas (20-11-2026) */
+.zsel { flex: none; }
+.hl .hl-pas, .hl .hl-con { padding: 7px 11px; font-size: 14px; }
+.zw-cab .zsel { margin-left: 8px; padding: 7px 12px; font-size: 14px; }
+.zw-cab.zw-cel .zsel { margin-left: 4px; padding: 5px 8px; font-size: 12.5px; gap: 4px; }
+.zw-cab.zw-cel .zsel svg { width: 14px; height: 14px; }
+.in-cab .zsel, .zw-cab .in-idi + .zsel { margin-left: 8px; }
