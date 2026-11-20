@@ -2282,3 +2282,6 @@ body.la-sin-scroll .la-vmap, body.la-pie-vista .la-vmap { display: none !importa
 html:has(body.dz-modo-pie), body.dz-modo-pie { margin: 0; background: #000 !important; }
 body.pie-solo #dz-app { padding: 0; margin: 0; max-width: none; width: auto; }
 body.pie-solo .zw-pie { margin: 0 !important; }
+/* Hugo 20-11: el Libro de Reclamaciones va debajo de las redes, más chico, para que todo quede parejo. */
+.zw-pie3 .zw-p3-c .zw-lr { display: inline-flex !important; margin-top: 9px; padding: 2px; border-radius: 6px; text-decoration: none; }
+.zw-pie3 .zw-p3-c .zw-lr img { width: 40px; }
